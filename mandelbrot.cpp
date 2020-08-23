@@ -58,7 +58,6 @@ uint32_t hsv2rgb(int h, float s, float v) {
   float hm = h / 60.0;
   float c = v * s;
   float x = c * (1.0 - abs(fmod(hm, 2.0) - 1.0));
-  std::cout << x << std::endl;
   int c1 = int(255.999 * c);
   int x1 = int(255.999 * x);
   switch (int(hm)) {
@@ -89,8 +88,6 @@ class palette {
       float v = 0.6 + 0.3 * sin(i / 16.0 * M_PI);
       float s = 0.75 + 0.23 * cos(i / 8.0 * M_PI);
       pal[i] = hsv2rgb(h, s, v);
-      std::cout << i << ": " << h << " " << std::hex << pal[i] << std::dec
-                << std::endl;
     }
   }
   uint32_t operator[](size_t i) { return pal[i]; }
@@ -139,10 +136,7 @@ void save(int slot) {
   std::ofstream of("bookmarks");
   if (of) {
     if (of.write(reinterpret_cast<const char *>(&saves), sizeof(saves))) {
-      std::cout << "wrote" << std::endl;
     }
-  } else {
-    std::cout << "failed to create" << std::endl;
   }
 }
 
@@ -272,8 +266,6 @@ void start_render(SDL_Surface *surface) {
  * parameters change.
  */
 void cancel_render() {
-  printf("cancel...");
-  fflush(stdout);
   while (jobs_left.try_acquire()) {
     jobs_done.release(1);
   }
@@ -281,7 +273,6 @@ void cancel_render() {
     jobs_done.acquire();
   }
   rendering = false;
-  printf("done\n");
 }
 
 /**
@@ -346,7 +337,7 @@ int main(int argc, char **argv) {
           auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                               std::chrono::high_resolution_clock::now() - start)
                               .count();
-          std::cout << "render complete in " << duration << std::endl;
+          std::cout << "render complete in " << duration << " ms" << std::endl;
         }
         update_surface = true;
         break;
@@ -354,8 +345,6 @@ int main(int argc, char **argv) {
         keep_running = SDL_FALSE;
         break;
       case SDL_KEYDOWN:
-        std::cout << "key " << e.key.keysym.sym << " " << e.key.keysym.mod
-                  << std::endl;
         if (e.key.keysym.sym == SDLK_RIGHT) {
           center_x += screen_size * 0.1;
           restart_render = true;
@@ -393,10 +382,8 @@ int main(int argc, char **argv) {
           }
         } else if (e.key.keysym.mod == KMOD_LCTRL ||
                    e.key.keysym.mod == KMOD_RCTRL) {
-          std::cout << "ctrl" << std::endl;
           if (e.key.keysym.sym >= SDLK_0 && e.key.keysym.sym <= SDLK_9) {
             int num = e.key.keysym.sym - SDLK_0;
-            std::cout << "saving slot" << num << std::endl;
             save(num);
           }
         } else if (e.key.keysym.mod == KMOD_NONE) {
@@ -408,6 +395,20 @@ int main(int argc, char **argv) {
           }
         }
         break;
+      case SDL_MOUSEMOTION:
+        break;
+      case SDL_MOUSEWHEEL: {
+        restart_render = true;
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        int ofsx = x - surface->w / 2;
+        int ofsy = y - surface->h / 2;
+        flt old_pixel_size = screen_size / surface->h;
+        screen_size /= pow(1.1, int(e.wheel.y));
+        flt new_pixel_size = screen_size / surface->h;
+        center_x = center_x + ofsx * old_pixel_size - ofsx * new_pixel_size;
+        center_y = center_y + ofsy * old_pixel_size - ofsy * new_pixel_size;
+      } break;
       case SDL_WINDOWEVENT:
         if (rendering) cancel_render();
         if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -419,7 +420,7 @@ int main(int argc, char **argv) {
   }
 
   if (rendering) cancel_render();
-  jobs_left.release(thread_count);
+  jobs_left.release(thread_count * 2);
   running = false;
   for (auto &thr : threads) thr.join();
   return 0;
