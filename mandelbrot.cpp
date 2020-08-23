@@ -49,7 +49,7 @@ std::chrono::time_point<std::chrono::high_resolution_clock> start;
 
 /**
  * Convert HSV to RGB color.
- * 
+ *
  * @param h Hue (0-359)
  * @param s Saturation (0.0-1.0)
  * @param v Value/lightness (0.0-1.0)
@@ -62,12 +62,18 @@ uint32_t hsv2rgb(int h, float s, float v) {
   int c1 = int(255.999 * c);
   int x1 = int(255.999 * x);
   switch (int(hm)) {
-    case 0: return RGB(c1, x1, 0);
-    case 1: return RGB(x1, c1, 0);
-    case 2: return RGB(0, c1, x1);
-    case 3: return RGB(0, x1, c1);
-    case 4: return RGB(x1, 0, c1);
-    default: return RGB(c1, 0, x1);
+    case 0:
+      return RGB(c1, x1, 0);
+    case 1:
+      return RGB(x1, c1, 0);
+    case 2:
+      return RGB(0, c1, x1);
+    case 3:
+      return RGB(0, x1, c1);
+    case 4:
+      return RGB(x1, 0, c1);
+    default:
+      return RGB(c1, 0, x1);
   }
 }
 
@@ -83,7 +89,8 @@ class palette {
       float v = 0.6 + 0.3 * sin(i / 16.0 * M_PI);
       float s = 0.75 + 0.23 * cos(i / 8.0 * M_PI);
       pal[i] = hsv2rgb(h, s, v);
-      std::cout << i << ": " << h << " " << std::hex << pal[i] << std::dec << std::endl;
+      std::cout << i << ": " << h << " " << std::hex << pal[i] << std::dec
+                << std::endl;
     }
   }
   uint32_t operator[](size_t i) { return pal[i]; }
@@ -135,7 +142,7 @@ void save(int slot) {
       std::cout << "wrote" << std::endl;
     }
   } else {
-      std::cout << "failed to create" << std::endl;
+    std::cout << "failed to create" << std::endl;
   }
 }
 
@@ -208,7 +215,7 @@ void render_rowx(int row) {
   row = maprow(row);
   if (row < rows) {
     FLT yc = miny + row * scl;
-    uint32_t* row_pixels = reinterpret_cast<uint32_t*>(pixels + row * pitch);
+    uint32_t *row_pixels = reinterpret_cast<uint32_t *>(pixels + row * pitch);
     for (int col = 0; col < w; ++col) {
       int i = iter(minx + col * scl, yc);
       *row_pixels++ = (i == LIMIT) ? 0x00 : pal[i % 256];
@@ -294,7 +301,6 @@ int main(int argc, char **argv) {
                             SDL_WINDOWPOS_UNDEFINED, 1024, 768,
                             SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
   SDL_Surface *surface = SDL_GetWindowSurface(window);
-  bool update_now = true;
   SDL_ShowWindow(window);
   int keep_running = SDL_TRUE;
 
@@ -305,16 +311,20 @@ int main(int argc, char **argv) {
   }
 
   bool update_surface = false;
+  bool restart_render = true;
 
   bool wait = true;
   while (keep_running) {
     SDL_Event e;
+
+    // Use polling until event queue is empty, then re-render if needed and
+    // wait.
     if (wait) {
-      if (update_now) {
+      if (restart_render) {
         if (rendering) cancel_render();
         start_render(surface);
         SDL_UpdateWindowSurface(window);
-        update_now = false;
+        restart_render = false;
       }
 
       if (update_surface) {
@@ -329,6 +339,7 @@ int main(int argc, char **argv) {
         continue;
       }
     }
+
     switch (e.type) {
       case SDL_USEREVENT:
         if (--jobs_remaining == 0) {
@@ -347,28 +358,38 @@ int main(int argc, char **argv) {
                   << std::endl;
         if (e.key.keysym.sym == SDLK_RIGHT) {
           center_x += screen_size * 0.1;
+          restart_render = true;
         } else if (e.key.keysym.sym == SDLK_LEFT) {
           center_x -= screen_size * 0.1;
+          restart_render = true;
         } else if (e.key.keysym.sym == SDLK_DOWN) {
           center_y += screen_size * 0.1;
+          restart_render = true;
         } else if (e.key.keysym.sym == SDLK_UP) {
           center_y -= screen_size * 0.1;
+          restart_render = true;
         } else if (e.key.keysym.sym == SDLK_RIGHTBRACKET) {
           screen_size *= 0.9;
+          restart_render = true;
         } else if (e.key.keysym.sym == SDLK_LEFTBRACKET) {
           screen_size /= 0.9;
+          restart_render = true;
         } else if (e.key.keysym.sym == SDLK_q) {
           keep_running = SDL_FALSE;
         } else if (e.key.keysym.mod == KMOD_LSHIFT ||
                    e.key.keysym.mod == KMOD_RSHIFT) {
           if (e.key.keysym.sym == SDLK_1) {
             algorithm = 1;
+            restart_render = true;
           } else if (e.key.keysym.sym == SDLK_2) {
             algorithm = 2;
+            restart_render = true;
           } else if (e.key.keysym.sym == SDLK_3) {
             algorithm = 3;
+            restart_render = true;
           } else if (e.key.keysym.sym == SDLK_4) {
             algorithm = 4;
+            restart_render = true;
           }
         } else if (e.key.keysym.mod == KMOD_LCTRL ||
                    e.key.keysym.mod == KMOD_RCTRL) {
@@ -383,16 +404,15 @@ int main(int argc, char **argv) {
             int num = e.key.keysym.sym - SDLK_0;
             std::cout << "loading slot" << num << std::endl;
             load(num);
-            update_now = true;
+            restart_render = true;
           }
         }
-        update_now = true;
         break;
       case SDL_WINDOWEVENT:
         if (rendering) cancel_render();
         if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
           surface = SDL_GetWindowSurface(window);
-          update_now = true;
+          restart_render = true;
           break;
         }
     }

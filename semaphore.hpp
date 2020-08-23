@@ -7,6 +7,7 @@
 
 class semaphore {
  public:
+  semaphore() : count(0) {}
   void acquire() {
     std::unique_lock<std::mutex> lock(mtx);
     while (count <= 0) {
