@@ -1,0 +1,9 @@
+vgcore.*
+mandelbrot
+.vscode/
+CMakeFiles/
+CMakeCache.txt
+bookmarks
+build/
+cmake_install.cmake
+Makefile
