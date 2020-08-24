@@ -19,7 +19,13 @@
 
 #include "semaphore.hpp"
 
+#if HAVE_FLT128
 typedef __float128 flt;
+#elif HAVE_FLT80
+typedef __float80 flt;
+#else
+typedef double flt;
+#endif
 
 flt center_x = -0.60;
 flt center_y = 0;
@@ -109,9 +115,9 @@ int maprow(int row) {
  * Position as stored in bookmarks
  */
 struct pos {
-  __float128 x;
-  __float128 y;
-  __float128 s;
+  flt x;
+  flt y;
+  flt s;
 };
 
 struct pos saves[10];
@@ -233,12 +239,16 @@ void render_row(int row) {
     case 2:
       render_rowx<double>(row);
       break;
+#if HAVE_FLT80
     case 3:
       render_rowx<__float80>(row);
       break;
+#endif
+#if HAVE_FLT128
     case 4:
       render_rowx<__float128>(row);
       break;
+#endif
   }
 }
 
