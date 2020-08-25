@@ -21,12 +21,11 @@ target_compile_definitions(mandelbrot PUBLIC -DHAVE_LONG_DOUBLE=$<BOOL:${HAVE_LO
 target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT80=$<BOOL:${HAVE_FLOAT80}>)
 target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT128=$<BOOL:${HAVE_FLOAT128}>)
 
-target_compile_options(mandelbrot PUBLIC -O3)
-target_compile_options(mandelbrot PUBLIC -Wall -Wextra -Werror)
-target_compile_options(mandelbrot PUBLIC -Werror)
-target_compile_options(mandelbrot PUBLIC -ffast-math)
-
 target_compile_options(mandelbrot PUBLIC -std=c++17)
-target_compile_options(mandelbrot PUBLIC -flto)
-target_link_options(mandelbrot PUBLIC -flto)
+target_compile_options(mandelbrot PUBLIC -Wall -Wextra)
+target_compile_options(mandelbrot PUBLIC -ffast-math)
+target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-Werror>")
+target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-O3>")
+target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
+target_link_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 target_link_libraries(mandelbrot PUBLIC SDL2 Threads::Threads)
