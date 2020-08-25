@@ -34,9 +34,9 @@ static const float zoom_factor = 0.75;
 
 SDL_PixelFormatEnum pixel_format = SDL_PIXELFORMAT_ARGB8888;
 
-#if HAVE_FLT128
+#if HAVE_FLOAT128
 typedef __float128 flt;
-#elif HAVE_FLT80
+#elif HAVE_FLOAT80
 typedef __float80 flt;
 #else
 typedef double flt;
@@ -222,6 +222,7 @@ int iter(FLT xc, FLT yc) {
 /**
  * Render a single row of the mandelbrot set
  */
+#include <typeinfo>
 template <typename FLT>
 void render_rowx(int row) {
   const FLT scl = pixel_size;
@@ -243,6 +244,20 @@ void render_rowx(int row) {
   SDL_PushEvent(&event);
 }
 
+std::ostream &operator<<(std::ostream &os, __float128 f) {
+  return os << double(f);
+}
+
+template <typename T>
+bool try_render(int row) {
+  if (pixel_size > std::numeric_limits<T>::epsilon()) {
+    render_rowx<T>(row);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 /**
  * Render specified row using selected algorithm.
  */
@@ -250,14 +265,17 @@ void render_rowx(int row) {
 void render_row(int row) {
   switch (algorithm) {
     case 0:
-      if (pixel_size > std::numeric_limits<float>::epsilon())
-        render_rowx<float>(row);
-      else if (pixel_size >  std::numeric_limits<double>::epsilon())
-        render_rowx<double>(row);
-      else if (pixel_size >  std::numeric_limits<__float80>::epsilon())
-        render_rowx<__float80>(row);
-      else
-        render_rowx<__float128>(row);
+      try_render<float>(row) || try_render<double>(row) ||
+#if HAVE_LONG_DOUBLE
+          try_render<long double>(row) ||
+#endif  // HAVE_LONG_DOUBLE
+#if HAVE_FLOAT80
+          try_render<__float80>(row) ||
+#endif  // HAVE_FLOATT80
+#if HAVE_FLOAT128
+          try_render<__float128>(row) ||
+#endif  // HAVE_FLOATT80
+          (render_rowx<flt>(row), true);
       break;
     case 1:
       render_rowx<float>(row);
@@ -265,12 +283,12 @@ void render_row(int row) {
     case 2:
       render_rowx<double>(row);
       break;
-#if HAVE_FLT80
+#if HAVE_FLOATT80
     case 3:
       render_rowx<__float80>(row);
       break;
 #endif
-#if HAVE_FLT128
+#if HAVE_FLOAT128
     case 4:
       render_rowx<__float128>(row);
       break;
@@ -282,12 +300,9 @@ void render_row(int row) {
  * Start render
  */
 void start_render() {
-  // pixels = reinterpret_cast<uint8_t *>(surface->pixels);
   pixel_size = screen_size / rows;
   min_x = center_x - w * pixel_size / 2;
   min_y = center_y - rows * pixel_size / 2;
-  // w = surface->w;
-  // rows = surface->h;
   row_bits = log2(rows) + 1;
   virtual_rows = 1 << row_bits;
   jobs_left.release(virtual_rows);
@@ -341,20 +356,15 @@ class mandelbrot_application {
 void mandelbrot_application::recreate_render_texture() {
   int width, height;
   SDL_GetWindowSize(window, &width, &height);
-  std::cout << "width: " << width << std::endl;
-  std::cout << "height: " << height << std::endl;
 
   if (texture) SDL_DestroyTexture(texture);
   texture = SDL_CreateTexture(renderer, pixel_format,
                               SDL_TEXTUREACCESS_STREAMING, width, height);
   delete[] pixels;
   pixels = new uint8_t[width * height * 4];
-  std::cout << "pixels: " << (void *)pixels << std::endl;
   pitch = width * 4;
   rows = height;
   w = width;
-  std::cout << "pitch: " << pitch << std::endl;
-  std::cout << "rows: " << rows << std::endl;
 }
 
 mandelbrot_application::mandelbrot_application() {
@@ -557,6 +567,8 @@ mandelbrot_application::~mandelbrot_application() {
 }
 
 int main(int argc, char **argv) {
+  (void)argc;
+  (void)argv;
   try {
     mandelbrot_application app;
     app.run();
