@@ -19,10 +19,10 @@
 
 #include "semaphore.hpp"
 
-static std::mutex log_mutex;
 static const float zoom_factor = 0.75;
 
 #if 0
+static std::mutex log_mutex;
 #define LOG(x)                                    \
   do {                                            \
     std::unique_lock<std::mutex> lock(log_mutex); \
@@ -195,28 +195,68 @@ bool isinside(FLT x, FLT y) {
   }
 }
 
+template <typename FLT>
+struct iter_result {
+  unsigned int iterations;
+  FLT x;
+  FLT y;
+};
+
 /**
  * Perform mandelbrot iterations and return the number of iteration required
  * before escape.
  */
 template <typename FLT>
-int iter(FLT xc, FLT yc) {
+iter_result<FLT> iter(FLT xc, FLT yc) {
   FLT x = xc;
   FLT y = yc;
-  if (isinside(xc, yc)) return LIMIT;
+  if (isinside(xc, yc)) return {LIMIT, 0, 0};
 
-  int i;
-  for (i = 0; i < LIMIT; ++i) {
-    FLT x2 = x * x;
-    FLT y2 = y * y;
-    if (x2 + y2 > 4.0) {
-      break;
-    }
-    FLT nextx = x2 - y2 + xc;
+  unsigned int iterations = 0;
+  FLT x2 = x * x;
+  FLT y2 = y * y;
+
+  while (x2 + y2 < 4.0 && ++iterations < LIMIT) {
     y = x * y * 2 + yc;
-    x = nextx;
+    x = x2 - y2 + xc;
+    x2 = x * x;
+    y2 = y * y;
   }
-  return i;
+
+  for (int j = 0; j < 4; ++j) {
+    y = x * y * 2 + yc;
+    x = x2 - y2 + xc;
+    x2 = x * x;
+    y2 = y * y;
+  }
+
+  return {iterations, x2, y2};
+}
+
+template <typename FLT>
+FLT fraction(FLT zx2, FLT zy2) {
+  const FLT log2Inverse = 1.0 / log(2.0);
+  const FLT logHalflog2Inverse = log(0.5) * log2Inverse;
+  return 5.0 - logHalflog2Inverse -
+         log(log(double(zx2) + double(zy2))) * log2Inverse;
+}
+
+uint32_t blend(uint32_t c1, uint32_t c2, float f) {
+  uint8_t r1 = c1 >> 24;
+  uint8_t g1 = (c1 >> 16) & 0xff;
+  uint8_t b1 = (c1 >> 8) & 0xff;
+  uint8_t a1 = (c1)&0xff;
+  uint8_t r2 = c2 >> 24;
+  uint8_t g2 = (c2 >> 16) & 0xff;
+  uint8_t b2 = (c2 >> 8) & 0xff;
+  uint8_t a2 = (c2)&0xff;
+  int s1 = 255 * f;
+  int s2 = 255 - s1;
+  uint8_t r3 = (r1 * s1 + r2 * s2) / 256;
+  uint8_t g3 = (g1 * s1 + g2 * s2) / 256;
+  uint8_t b3 = (b1 * s1 + b2 * s2) / 256;
+  uint8_t a3 = (a1 * s1 + a2 * s2) / 256;
+  return (r3 << 24) | (g3 << 16) | (b3 << 8) | (a3);
 }
 
 /**
@@ -234,8 +274,20 @@ void render_rowx(int row) {
     uint32_t *row_pixels = reinterpret_cast<uint32_t *>(pixels + row * pitch);
     LOG("row: " << row << " " << rows << " " << (void *)row_pixels << " " << w);
     for (int col = 0; col < w; ++col) {
-      int i = iter(minx + col * scl, yc);
-      *row_pixels++ = (i == LIMIT) ? 0x00 : pal[i % 256];
+      auto result = iter(minx + col * scl, yc);
+      if (result.iterations == LIMIT) {
+        *row_pixels++ = 0x00;
+      } else {
+        FLT zx2 = result.x;
+        FLT zy2 = result.y;
+        FLT sum = result.iterations + fraction(zx2, zy2);
+        unsigned int n = (unsigned int)floor(double(sum));
+        FLT f2 = sum - n;
+        unsigned int n1 = n % 256;
+        FLT f1 = 1.0 - f2;
+        unsigned int n2 = ((n1 + 1) % 256);
+        *row_pixels++ = blend(pal[n1], pal[n2], f1);
+      }
     }
   }
 
@@ -285,7 +337,7 @@ void render_row(int row) {
     case 2:
       render_rowx<double>(row);
       break;
-#if HAVE_FLOATT80
+#if HAVE_FLOAT80
     case 3:
       render_rowx<__float80>(row);
       break;

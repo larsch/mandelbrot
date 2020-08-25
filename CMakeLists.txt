@@ -23,6 +23,7 @@ target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT128=$<BOOL:${HAVE_FLOAT
 
 target_compile_options(mandelbrot PUBLIC -O3)
 target_compile_options(mandelbrot PUBLIC -Wall -Wextra -Werror)
+target_compile_options(mandelbrot PUBLIC -Werror)
 target_compile_options(mandelbrot PUBLIC -ffast-math)
 
 target_compile_options(mandelbrot PUBLIC -std=c++17)
