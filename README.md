@@ -1,12 +1,13 @@
 # Mandelbrot Explorer
 
-Fast C++/SDL2 mandelbrot explorer.
+Fast multithreaded C++/SDL2 mandelbrot explorer.
 
 Features:
 
 * Interactive
 * Multi-threaded
 * Zoom/pan, even before current render is complete
+* Incremental rendering
 
 ## Keyboard navigation
 

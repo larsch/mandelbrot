@@ -19,6 +19,21 @@
 
 #include "semaphore.hpp"
 
+static std::mutex log_mutex;
+static const float zoom_factor = 0.75;
+
+#if 0
+#define LOG(x)                                    \
+  do {                                            \
+    std::unique_lock<std::mutex> lock(log_mutex); \
+    std::cout << x << std::endl;                  \
+  } while (0)
+#else
+#define LOG(x)
+#endif
+
+SDL_PixelFormatEnum pixel_format = SDL_PIXELFORMAT_ARGB8888;
+
 #if HAVE_FLT128
 typedef __float128 flt;
 #elif HAVE_FLT80
@@ -27,29 +42,29 @@ typedef __float80 flt;
 typedef double flt;
 #endif
 
-flt center_x = -0.60;
-flt center_y = 0;
-flt screen_size = 2.0;
+static flt center_x = -0.60;
+static flt center_y = 0;
+static flt screen_size = 2.0;
 
 const int LIMIT = 2048;
 
-uint8_t *pixels;
-int w;
-flt min_x;
-flt min_y;
-flt pixel_size;
-int pitch;
-semaphore jobs_left;
-std::atomic_int next_job = 0;
-semaphore jobs_done;
-SDL_Window *window = nullptr;
-int virtual_rows = 0;
-int rows = 0;
-int row_bits;
-bool rendering = false;
-std::atomic_bool running = true;
-int jobs_remaining = 0;
-std::chrono::time_point<std::chrono::high_resolution_clock> start;
+static uint8_t *pixels = nullptr;
+static int w;
+static flt min_x;
+static flt min_y;
+static flt pixel_size;
+static int pitch;
+static semaphore jobs_left;
+static std::atomic_int next_job = 0;
+static semaphore jobs_done;
+static int virtual_rows = 0;
+static int rows = 0;
+static int row_bits;
+static bool rendering = false;
+static std::atomic_bool running = true;
+static int jobs_remaining = 0;
+static std::chrono::time_point<std::chrono::high_resolution_clock> start;
+static int algorithm = 0;
 
 #define RGB(r, g, b) (((r) << 16) | ((g) << 8) | ((b)))
 
@@ -216,6 +231,7 @@ void render_rowx(int row) {
   if (row < rows) {
     FLT yc = miny + row * scl;
     uint32_t *row_pixels = reinterpret_cast<uint32_t *>(pixels + row * pitch);
+    LOG("row: " << row << " " << rows << " " << (void *)row_pixels << " " << w);
     for (int col = 0; col < w; ++col) {
       int i = iter(minx + col * scl, yc);
       *row_pixels++ = (i == LIMIT) ? 0x00 : pal[i % 256];
@@ -227,12 +243,22 @@ void render_rowx(int row) {
   SDL_PushEvent(&event);
 }
 
-int algorithm = 1;
 /**
  * Render specified row using selected algorithm.
  */
+#include <cfloat>
 void render_row(int row) {
   switch (algorithm) {
+    case 0:
+      if (pixel_size > std::numeric_limits<float>::epsilon())
+        render_rowx<float>(row);
+      else if (pixel_size >  std::numeric_limits<double>::epsilon())
+        render_rowx<double>(row);
+      else if (pixel_size >  std::numeric_limits<__float80>::epsilon())
+        render_rowx<__float80>(row);
+      else
+        render_rowx<__float128>(row);
+      break;
     case 1:
       render_rowx<float>(row);
       break;
@@ -255,14 +281,13 @@ void render_row(int row) {
 /**
  * Start render
  */
-void start_render(SDL_Surface *surface) {
-  pixels = reinterpret_cast<uint8_t *>(surface->pixels);
-  pixel_size = screen_size / surface->h;
-  min_x = center_x - surface->w * pixel_size / 2;
-  min_y = center_y - surface->h * pixel_size / 2;
-  pitch = surface->pitch;
-  w = surface->w;
-  rows = surface->h;
+void start_render() {
+  // pixels = reinterpret_cast<uint8_t *>(surface->pixels);
+  pixel_size = screen_size / rows;
+  min_x = center_x - w * pixel_size / 2;
+  min_y = center_y - rows * pixel_size / 2;
+  // w = surface->w;
+  // rows = surface->h;
   row_bits = log2(rows) + 1;
   virtual_rows = 1 << row_bits;
   jobs_left.release(virtual_rows);
@@ -297,12 +322,60 @@ void worker() {
   }
 }
 
-int main(int argc, char **argv) {
+class mandelbrot_application {
+ public:
+  mandelbrot_application();
+  ~mandelbrot_application();
+  mandelbrot_application(const mandelbrot_application &) = delete;
+  mandelbrot_application &operator=(const mandelbrot_application &) = delete;
+  void run();
+  void recreate_render_texture();
+  void zoom(int x, int y, float scale);
+
+ private:
+  SDL_Window *window = nullptr;
+  SDL_Renderer *renderer = nullptr;
+  SDL_Texture *texture = nullptr;
+};
+
+void mandelbrot_application::recreate_render_texture() {
+  int width, height;
+  SDL_GetWindowSize(window, &width, &height);
+  std::cout << "width: " << width << std::endl;
+  std::cout << "height: " << height << std::endl;
+
+  if (texture) SDL_DestroyTexture(texture);
+  texture = SDL_CreateTexture(renderer, pixel_format,
+                              SDL_TEXTUREACCESS_STREAMING, width, height);
+  delete[] pixels;
+  pixels = new uint8_t[width * height * 4];
+  std::cout << "pixels: " << (void *)pixels << std::endl;
+  pitch = width * 4;
+  rows = height;
+  w = width;
+  std::cout << "pitch: " << pitch << std::endl;
+  std::cout << "rows: " << rows << std::endl;
+}
+
+mandelbrot_application::mandelbrot_application() {
+  SDL_Init(SDL_INIT_VIDEO);
+
   window = SDL_CreateWindow("Mandelbrot", SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED, 1024, 768,
-                            SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-  SDL_Surface *surface = SDL_GetWindowSurface(window);
-  SDL_ShowWindow(window);
+                            SDL_WINDOW_RESIZABLE);
+  if (window == nullptr) throw std::runtime_error("Failed to create window");
+
+  pixel_format = (SDL_PixelFormatEnum)SDL_GetWindowPixelFormat(window);
+
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+  recreate_render_texture();
+}
+
+void mandelbrot_application::run() {
+  // SDL_Surface *surface = SDL_GetWindowSurface(window);
+  // SDL_Surface *surface = NULL;
+  // SDL_ShowWindow(window);
   int keep_running = SDL_TRUE;
 
   const int thread_count = 8;
@@ -323,13 +396,22 @@ int main(int argc, char **argv) {
     if (wait) {
       if (restart_render) {
         if (rendering) cancel_render();
-        start_render(surface);
-        SDL_UpdateWindowSurface(window);
+        start_render();
         restart_render = false;
       }
 
       if (update_surface) {
-        SDL_UpdateWindowSurface(window);
+        /* TODO: Only copy rendered rows */
+        LOG("update_surface");
+        int texture_pitch;
+        void *pix = NULL;
+        SDL_LockTexture(texture, NULL, &pix, &texture_pitch);
+        int width, h;
+        SDL_GetWindowSize(window, &width, &h);
+        memcpy(pix, pixels, width * h * 4);
+        SDL_UnlockTexture(texture);
+        SDL_RenderCopy(renderer, texture, NULL, NULL);
+        SDL_RenderPresent(renderer);
         update_surface = false;
       }
       SDL_WaitEvent(&e);
@@ -368,10 +450,16 @@ int main(int argc, char **argv) {
           center_y -= screen_size * 0.1;
           restart_render = true;
         } else if (e.key.keysym.sym == SDLK_RIGHTBRACKET) {
-          screen_size *= 0.9;
+          if (rendering) cancel_render();
+          int width, height;
+          SDL_GetWindowSize(window, &width, &height);
+          zoom(width / 2, height / 2, zoom_factor);
           restart_render = true;
         } else if (e.key.keysym.sym == SDLK_LEFTBRACKET) {
-          screen_size /= 0.9;
+          if (rendering) cancel_render();
+          int width, height;
+          SDL_GetWindowSize(window, &width, &height);
+          zoom(width / 2, height / 2, 1.0 / zoom_factor);
           restart_render = true;
         } else if (e.key.keysym.sym == SDLK_q) {
           keep_running = SDL_FALSE;
@@ -408,21 +496,16 @@ int main(int argc, char **argv) {
       case SDL_MOUSEMOTION:
         break;
       case SDL_MOUSEWHEEL: {
+        if (rendering) cancel_render();
         restart_render = true;
         int x, y;
         SDL_GetMouseState(&x, &y);
-        int ofsx = x - surface->w / 2;
-        int ofsy = y - surface->h / 2;
-        flt old_pixel_size = screen_size / surface->h;
-        screen_size /= pow(1.1, int(e.wheel.y));
-        flt new_pixel_size = screen_size / surface->h;
-        center_x = center_x + ofsx * old_pixel_size - ofsx * new_pixel_size;
-        center_y = center_y + ofsy * old_pixel_size - ofsy * new_pixel_size;
+        zoom(x, y, pow(zoom_factor, int(e.wheel.y)));
       } break;
       case SDL_WINDOWEVENT:
-        if (rendering) cancel_render();
         if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
-          surface = SDL_GetWindowSurface(window);
+          if (rendering) cancel_render();
+          recreate_render_texture();
           restart_render = true;
           break;
         }
@@ -430,8 +513,56 @@ int main(int argc, char **argv) {
   }
 
   if (rendering) cancel_render();
-  jobs_left.release(thread_count * 2);
+  jobs_left.release(thread_count);
   running = false;
   for (auto &thr : threads) thr.join();
-  return 0;
+}
+
+void mandelbrot_application::zoom(int x, int y, float scale) {
+  int width, height;
+  SDL_GetWindowSize(window, &width, &height);
+  int ofsx = x - width / 2;
+  int ofsy = y - height / 2;
+  flt old_pixel_size = screen_size / height;
+  screen_size *= scale;
+  flt new_pixel_size = screen_size / height;
+
+  flt left = center_x - width / 2 * old_pixel_size;
+  flt top = center_y - height / 2 * old_pixel_size;
+
+  center_x = center_x + ofsx * old_pixel_size - ofsx * new_pixel_size;
+  center_y = center_y + ofsy * old_pixel_size - ofsy * new_pixel_size;
+
+  flt x1 = width / 2 - (center_x - left) / new_pixel_size;
+  flt y1 = height / 2 - (center_y - top) / new_pixel_size;
+
+  SDL_Texture *back = SDL_CreateTexture(
+      renderer, pixel_format, SDL_TEXTUREACCESS_TARGET, width, height);
+  SDL_SetRenderTarget(renderer, back);
+  SDL_FRect dst{static_cast<float>(x1), static_cast<float>(y1),
+                static_cast<float>(width / scale),
+                static_cast<float>(height / scale)};
+  SDL_RenderCopy(renderer, texture, 0, 0);
+  SDL_RenderCopyF(renderer, texture, 0, &dst);
+  SDL_RenderReadPixels(renderer, 0, pixel_format, pixels, pitch);
+  SDL_SetRenderTarget(renderer, NULL);
+  SDL_DestroyTexture(back);
+}
+
+mandelbrot_application::~mandelbrot_application() {
+  SDL_DestroyTexture(texture);
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+  delete[] pixels;
+}
+
+int main(int argc, char **argv) {
+  try {
+    mandelbrot_application app;
+    app.run();
+    return EXIT_SUCCESS;
+  } catch (const std::exception &exc) {
+    std::cerr << exc.what() << std::endl;
+    return EXIT_FAILURE;
+  }
 }
