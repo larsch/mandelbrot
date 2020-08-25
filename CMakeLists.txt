@@ -17,9 +17,9 @@ message("sizeof(__float128) = ${FLOAT128}")
 
 add_executable(mandelbrot mandelbrot.cpp)
 
-target_compile_definitions(mandelbrot PUBLIC -DHAVE_LONG_DOUBLE=$<BOOL:HAVE_LONG_DOUBLE>)
-target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT80=$<BOOL:HAVE_FLOAT80>)
-target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT128=$<BOOL:HAVE_FLOAT128>)
+target_compile_definitions(mandelbrot PUBLIC -DHAVE_LONG_DOUBLE=$<BOOL:${HAVE_LONG_DOUBLE}>)
+target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT80=$<BOOL:${HAVE_FLOAT80}>)
+target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT128=$<BOOL:${HAVE_FLOAT128}>)
 
 target_compile_options(mandelbrot PUBLIC -O3)
 target_compile_options(mandelbrot PUBLIC -Wall -Wextra -Werror)

@@ -244,9 +244,11 @@ void render_rowx(int row) {
   SDL_PushEvent(&event);
 }
 
+#if HAVE_FLOAT128
 std::ostream &operator<<(std::ostream &os, __float128 f) {
   return os << double(f);
 }
+#endif
 
 template <typename T>
 bool try_render(int row) {
