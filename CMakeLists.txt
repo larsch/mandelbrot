@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.18)
 project(mandlebrot CXX)
 
-set(CMAKE_MODULE_PATH /usr/lib/cmake)
-include(SDL2/SDL2Targets)
+set(CMAKE_MODULE_PATH "${CMAKE_SYSROOT}/lib/cmake")
+if(${CMAKE_CROSSCOMPILING})
+    set(SDL2_LIBS mingw32 SDL2main SDL2.dll)
+    include(SDL2/sdl2-config)
+else()
+    include(SDL2/SDL2Targets)
+    set(SDL2_LIBS SDL2::SDL2)
+endif()
 
 find_package(Threads REQUIRED)
 
@@ -29,4 +35,4 @@ target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-O3>")
 target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 target_link_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 
-target_link_libraries(mandelbrot PUBLIC SDL2::SDL2 Threads::Threads)
+target_link_libraries(mandelbrot PUBLIC "${SDL2_LIBS}" Threads::Threads)

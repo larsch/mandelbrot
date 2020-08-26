@@ -19,6 +19,10 @@
 
 #include "semaphore.hpp"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 static const float zoom_factor = 0.75;
 
 #if 0
