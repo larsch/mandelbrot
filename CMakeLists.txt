@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.18)
-include(CheckTypeSize)
+project(mandlebrot CXX)
 
-project(mandlebrot)
+set(CMAKE_MODULE_PATH /usr/lib/cmake)
+include(SDL2/SDL2Targets)
 
 find_package(Threads REQUIRED)
-check_type_size(float FLOAT)
-check_type_size(double DOUBLE)
-check_type_size("long double" LONG_DOUBLE)
-check_type_size(__float80 FLOAT80)
-check_type_size(__float128 FLOAT128)
-message("sizeof(float) = ${FLOAT}")
-message("sizeof(double) = ${DOUBLE}")
+
+include(CheckTypeSize)
+check_type_size("long double" LONG_DOUBLE LANGUAGE CXX)
+check_type_size(__float80 FLOAT80 LANGUAGE CXX)
+check_type_size(__float128 FLOAT128 LANGUAGE CXX)
+
 message("sizeof(long double) = ${LONG_DOUBLE}")
 message("sizeof(__float80) = ${FLOAT80}")
 message("sizeof(__float128) = ${FLOAT128}")
@@ -28,4 +28,5 @@ target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-Werror>")
 target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-O3>")
 target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 target_link_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
-target_link_libraries(mandelbrot PUBLIC SDL2 Threads::Threads)
+
+target_link_libraries(mandelbrot PUBLIC SDL2::SDL2 Threads::Threads)
