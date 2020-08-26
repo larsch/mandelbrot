@@ -354,8 +354,8 @@ void render_row(int row) {
  */
 void start_render() {
   pixel_size = screen_size / rows;
-  min_x = center_x - w * pixel_size / 2;
-  min_y = center_y - rows * pixel_size / 2;
+  min_x = center_x - w * pixel_size / 2.0;
+  min_y = center_y - rows * pixel_size / 2.0;
   row_bits = log2(rows) + 1;
   virtual_rows = 1 << row_bits;
   jobs_left.release(virtual_rows);
@@ -590,14 +590,14 @@ void mandelbrot_application::zoom(int x, int y, float scale) {
   screen_size *= scale;
   flt new_pixel_size = screen_size / height;
 
-  flt left = center_x - width / 2 * old_pixel_size;
-  flt top = center_y - height / 2 * old_pixel_size;
+  flt left = center_x - width * old_pixel_size / 2.0;
+  flt top = center_y - height * old_pixel_size / 2.0;
 
   center_x = center_x + ofsx * old_pixel_size - ofsx * new_pixel_size;
   center_y = center_y + ofsy * old_pixel_size - ofsy * new_pixel_size;
 
-  flt x1 = width / 2 - (center_x - left) / new_pixel_size;
-  flt y1 = height / 2 - (center_y - top) / new_pixel_size;
+  flt x1 = width / 2.0 - (center_x - left) / new_pixel_size;
+  flt y1 = height / 2.0 - (center_y - top) / new_pixel_size;
 
   SDL_Texture *back = SDL_CreateTexture(
       renderer, pixel_format, SDL_TEXTUREACCESS_TARGET, width, height);
