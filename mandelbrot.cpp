@@ -272,7 +272,6 @@ void render_rowx(int row) {
   if (row < rows) {
     FLT yc = miny + row * scl;
     uint32_t *row_pixels = reinterpret_cast<uint32_t *>(pixels + row * pitch);
-    LOG("row: " << row << " " << rows << " " << (void *)row_pixels << " " << w);
     for (int col = 0; col < w; ++col) {
       auto result = iter(minx + col * scl, yc);
       if (result.iterations == LIMIT) {
