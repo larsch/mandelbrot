@@ -470,7 +470,6 @@ void mandelbrot_application::run() {
 
       if (update_surface) {
         /* TODO: Only copy rendered rows */
-        LOG("update_surface");
         int texture_pitch;
         void *pix = NULL;
         SDL_LockTexture(texture, NULL, &pix, &texture_pitch);
