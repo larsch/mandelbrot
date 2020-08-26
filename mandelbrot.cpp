@@ -369,12 +369,14 @@ void start_render() {
  * parameters change.
  */
 void cancel_render() {
-  while (jobs_left.try_acquire()) {
+  // Steal remaining jobs
+  while (jobs_left.try_acquire())
     jobs_done.release(1);
-  }
-  for (int i = 0; i < virtual_rows; ++i) {
+
+  // Wait for all workers to complete
+  for (int i = 0; i < virtual_rows; ++i)
     jobs_done.acquire();
-  }
+
   rendering = false;
 }
 
@@ -382,8 +384,11 @@ void cancel_render() {
  * Rendering worker main function.
  */
 void worker() {
-  while (running) {
+  while (true) {
     jobs_left.acquire();
+    if (!running) {
+      break;
+    }
     auto job = next_job++;
     render_row(job);
     jobs_done.release(1);
@@ -575,9 +580,9 @@ void mandelbrot_application::run() {
     }
   }
 
+  running = false;
   if (rendering) cancel_render();
   jobs_left.release(thread_count);
-  running = false;
   for (auto &thr : threads) thr.join();
 }
 
