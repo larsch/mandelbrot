@@ -10,6 +10,8 @@ else()
     set(SDL2_LIBS SDL2::SDL2)
 endif()
 
+find_library(LIBGMP NAMES gmp)
+
 find_package(Threads REQUIRED)
 
 include(CheckTypeSize)
@@ -23,9 +25,15 @@ message("sizeof(__float128) = ${FLOAT128}")
 
 add_executable(mandelbrot mandelbrot.cpp)
 
-target_compile_definitions(mandelbrot PUBLIC -DHAVE_LONG_DOUBLE=$<BOOL:${HAVE_LONG_DOUBLE}>)
-target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT80=$<BOOL:${HAVE_FLOAT80}>)
-target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT128=$<BOOL:${HAVE_FLOAT128}>)
+add_compile_definitions(HAVE_LONG_DOUBLE=$<BOOL:${HAVE_LONG_DOUBLE}>
+HAVE_FLOAT80=$<BOOL:${HAVE_FLOAT80}>
+HAVE_FLOAT128=$<BOOL:${HAVE_FLOAT128}>
+HAVE_LIBGMP=$<BOOL:${LIBGMP}>)
+
+# target_compile_definitions(mandelbrot PUBLIC -DHAVE_LONG_DOUBLE=$<BOOL:${HAVE_LONG_DOUBLE}>)
+# target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT80=$<BOOL:${HAVE_FLOAT80}>)
+# target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT128=$<BOOL:${HAVE_FLOAT128}>)
+# target_compile_definitions(mandelbrot PUBLIC -DHAVE_LIBGMP=$<BOOL:${LIBGMP}>)
 
 target_compile_options(mandelbrot PUBLIC -std=c++17)
 target_compile_options(mandelbrot PUBLIC -Wall -Wextra)
@@ -36,3 +44,10 @@ target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 target_link_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 
 target_link_libraries(mandelbrot PUBLIC "${SDL2_LIBS}" Threads::Threads)
+
+add_executable(benchmark benchmark.cpp)
+
+if(LIBGMP)
+target_link_libraries(mandelbrot PUBLIC "${LIBGMP}")
+target_link_libraries(benchmark PUBLIC "${LIBGMP}")
+endif()

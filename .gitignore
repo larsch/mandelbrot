@@ -1,5 +1,6 @@
 vgcore.*
 mandelbrot
+benchmark
 .vscode/
 CMakeFiles/
 CMakeCache.txt

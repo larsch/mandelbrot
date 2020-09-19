@@ -17,7 +17,12 @@
 #include <thread>
 #include <vector>
 
+#include "float.hpp"
 #include "semaphore.hpp"
+#include "mandelbrot.hpp"
+#if HAVE_LIBGMP
+#include "gmpfloat.hpp"
+#endif
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -38,19 +43,9 @@ static std::mutex log_mutex;
 
 SDL_PixelFormatEnum pixel_format = SDL_PIXELFORMAT_ARGB8888;
 
-#if HAVE_FLOAT128
-typedef __float128 flt;
-#elif HAVE_FLOAT80
-typedef __float80 flt;
-#else
-typedef double flt;
-#endif
-
 static flt center_x = -0.60;
 static flt center_y = 0;
 static flt screen_size = 2.0;
-
-const int LIMIT = 2048;
 
 static uint8_t *pixels = nullptr;
 static int w;
@@ -175,75 +170,6 @@ void load(int slot) {
   screen_size = saves[slot].s;
 }
 
-/**
- * Check if x,y is inside some of the obvious areas of the mandelbrot set. This
- * improves performance greatly when rendering initial screen where the main set
- * is visible.
- */
-template <typename FLT>
-bool isinside(FLT x, FLT y) {
-  FLT absy = abs(double(y));
-  if (x > -0.75 && absy < 0.75) {
-    // check if x,y is inside the main cardioid
-    x -= 0.25;
-    FLT c1 = (x * x + y * y);
-    FLT a = 0.25;
-    FLT c2 = c1 * c1 + 4 * a * x * c1 - 4 * a * a * y * y;
-    return c2 < 0;
-  } else if (x > -1.25 && absy < 0.25) {
-    // check if x,y is inside the left circle
-    x += 1;
-    return x * x + y * y < 0.0625;
-  } else {
-    return false;
-  }
-}
-
-template <typename FLT>
-struct iter_result {
-  unsigned int iterations;
-  FLT x;
-  FLT y;
-};
-
-/**
- * Perform mandelbrot iterations and return the number of iteration required
- * before escape.
- */
-template <typename FLT>
-iter_result<FLT> iter(FLT xc, FLT yc) {
-  FLT x = xc;
-  FLT y = yc;
-  if (isinside(xc, yc)) return {LIMIT, 0, 0};
-
-  unsigned int iterations = 0;
-  FLT x2 = x * x;
-  FLT y2 = y * y;
-
-  while (x2 + y2 < 4.0 && ++iterations < LIMIT) {
-    y = x * y * 2 + yc;
-    x = x2 - y2 + xc;
-    x2 = x * x;
-    y2 = y * y;
-  }
-
-  for (int j = 0; j < 4; ++j) {
-    y = x * y * 2 + yc;
-    x = x2 - y2 + xc;
-    x2 = x * x;
-    y2 = y * y;
-  }
-
-  return {iterations, x2, y2};
-}
-
-template <typename FLT>
-FLT fraction(FLT zx2, FLT zy2) {
-  const FLT log2Inverse = 1.0 / log(2.0);
-  const FLT logHalflog2Inverse = log(0.5) * log2Inverse;
-  return 5.0 - logHalflog2Inverse -
-         log(log(double(zx2) + double(zy2))) * log2Inverse;
-}
 
 uint32_t blend(uint32_t c1, uint32_t c2, float f) {
   uint8_t r1 = c1 >> 24;
@@ -274,20 +200,20 @@ void render_rowx(int row) {
   const FLT miny = min_y;
   row = maprow(row);
   if (row < rows) {
-    FLT yc = miny + row * scl;
+    FLT yc = miny + FLT(row) * scl;
     uint32_t *row_pixels = reinterpret_cast<uint32_t *>(pixels + row * pitch);
     for (int col = 0; col < w; ++col) {
-      auto result = iter(minx + col * scl, yc);
+      auto result = iter(minx + FLT(col) * scl, yc);
       if (result.iterations == LIMIT) {
         *row_pixels++ = 0x00;
       } else {
         FLT zx2 = result.x;
         FLT zy2 = result.y;
-        FLT sum = result.iterations + fraction(zx2, zy2);
+        double sum = result.iterations + fraction(zx2, zy2);
         unsigned int n = (unsigned int)floor(double(sum));
-        FLT f2 = sum - n;
+        double f2 = sum - double(n);
         unsigned int n1 = n % 256;
-        FLT f1 = 1.0 - f2;
+        double f1 = 1.0 - f2;
         unsigned int n2 = ((n1 + 1) % 256);
         *row_pixels++ = blend(pal[n1], pal[n2], f1);
       }
@@ -350,6 +276,11 @@ void render_row(int row) {
       render_rowx<__float128>(row);
       break;
 #endif
+#if HAVE_LIBGMP
+    case 5:
+      render_rowx<gmpfloat>(row);
+      break;
+#endif
   }
 }
 
@@ -374,12 +305,10 @@ void start_render() {
  */
 void cancel_render() {
   // Steal remaining jobs
-  while (jobs_left.try_acquire())
-    jobs_done.release(1);
+  while (jobs_left.try_acquire()) jobs_done.release(1);
 
   // Wait for all workers to complete
-  for (int i = 0; i < virtual_rows; ++i)
-    jobs_done.acquire();
+  for (int i = 0; i < virtual_rows; ++i) jobs_done.acquire();
 
   rendering = false;
 }
@@ -547,6 +476,9 @@ void mandelbrot_application::run() {
             restart_render = true;
           } else if (e.key.keysym.sym == SDLK_4) {
             algorithm = 4;
+            restart_render = true;
+          } else if (e.key.keysym.sym == SDLK_5) {
+            algorithm = 5;
             restart_render = true;
           }
         } else if (e.key.keysym.mod == KMOD_LCTRL ||
