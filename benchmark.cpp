@@ -1,4 +1,5 @@
 #include <chrono>
+#include <ctime>
 #include <iostream>
 
 #include "mandelbrot.hpp"
@@ -9,21 +10,25 @@
 double get_double(const mpf_class& f) { return f.get_d(); }
 #endif
 
+#include "mpfrfloat.hpp"
+
 static const int MIN_DURATION = 1000;
 static const int INNER_ITERATIONS = 32768;
 
 template <typename FLT>
-void benchmark(const char* type) {
-  FLT xc = FLT(0.25 + (0.1 * rand()) / RAND_MAX);
-  FLT yc = FLT(0.25 + (0.1 * rand()) / RAND_MAX);
+void benchmark(const char* type, double xc0, double yc0) {
+  // FLT xc = FLT(xc0);
+  // FLT yc = FLT(yc0);
 
-  int sum;
-  int iterations = 100;
   std::cout << type << ": " << std::flush;
+  int iterations = 16;
   while (true) {
+    unsigned long sum = 0;
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < iterations; ++i) {
       for (int j = 0; j < INNER_ITERATIONS; ++j) {
+        FLT xc = FLT(0.01 + (0.1 * rand() / RAND_MAX));
+        FLT yc = FLT(0.01 + (0.1 * rand() / RAND_MAX));
         auto result = iter(xc, yc);
         sum += result.iterations;
       }
@@ -32,9 +37,12 @@ void benchmark(const char* type) {
                         std::chrono::high_resolution_clock::now() - start)
                         .count();
     if (duration >= MIN_DURATION) {
-      auto iterations_per_second = iterations * 1000 / duration;
-      std::cout << "\r" << sum << "\r" << type << ": " << iterations_per_second
-                << " iteration/sec" << std::endl;
+      long int iterations_per_millisecond =
+          iterations * INNER_ITERATIONS / duration;
+      std::cout << "\r" << sum / iterations << " - " << type << ": "
+                << iterations_per_millisecond << " iteration/msec";
+      std::cout << " " << iterations << " in " << duration << " milliseconds";
+      std::cout << std::endl;
       break;
     } else if (duration <= 8) {
       iterations *= 8;
@@ -44,19 +52,34 @@ void benchmark(const char* type) {
   }
 }
 
+#define BENCHMARK(type) benchmark<type>(#type, xc, yc)
+
 int main(int argc, char** argv) {
   (void)argc;
   (void)argv;
-  benchmark<float>("float");
-  benchmark<double>("double");
+  srand(time(NULL));
+  double xc = 0.01 + (0.1 * rand() / RAND_MAX);
+  double yc = 0.01 + (0.1 * rand() / RAND_MAX);
+
+  benchmark<float>("float", xc, yc);
+  benchmark<double>("double", xc, yc);
+  BENCHMARK(float);
+  BENCHMARK(double);
 #if HAVE_FLOAT80
-  benchmark<__float80>("__float80");
+  BENCHMARK(__float80);
 #endif
 #if HAVE_FLOAT128
-  benchmark<__float128>("__float128");
+  BENCHMARK(__float128);
 #endif
 #if HAVE_LIBGMP
-  benchmark<gmpfloat>("gmpfloat");
-  benchmark<mpf_class>("mpf_class");
+  BENCHMARK(gmpfloat);
+  BENCHMARK(mpf_class);
 #endif
+  benchmark<mpfrfloat<256, MPFR_RNDN>>("mpfrfloat<256, MPFR_RNDN>", xc, yc);
+  benchmark<mpfrfloat<256, MPFR_RNDZ>>("mpfrfloat<256, MPFR_RNDZ>", xc, yc);
+  benchmark<mpfrfloat<256, MPFR_RNDU>>("mpfrfloat<256, MPFR_RNDU>", xc, yc);
+  benchmark<mpfrfloat<256, MPFR_RNDD>>("mpfrfloat<256, MPFR_RNDD>", xc, yc);
+  benchmark<mpfrfloat<256, MPFR_RNDA>>("mpfrfloat<256, MPFR_RNDA>", xc, yc);
+  benchmark<mpfrfloat<256, MPFR_RNDF>>("mpfrfloat<256, MPFR_RNDF>", xc, yc);
+  benchmark<mpfrfloat<256, MPFR_RNDNA>>("mpfrfloat<256, MPFR_RNDNA>", xc, yc);
 }

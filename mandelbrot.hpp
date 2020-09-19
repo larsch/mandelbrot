@@ -25,7 +25,7 @@ double get_double(const FLT& f) {
  */
 template <typename FLT>
 bool isinside(FLT x, FLT y) {
-  FLT absy = FLT(abs(get_double(y)));
+  FLT absy = FLT(std::abs(get_double(y)));
   if (x > -0.75 && absy < 0.75) {
     // check if x,y is inside the main cardioid
     x -= FLT(0.25);
