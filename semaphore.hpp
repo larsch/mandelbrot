@@ -1,9 +1,9 @@
 #ifndef _semaphore_hpp
 #define _semaphore_hpp
 
-#include <mutex>
 #include <condition_variable>
 #include <iostream>
+#include <mutex>
 
 class semaphore {
  public:

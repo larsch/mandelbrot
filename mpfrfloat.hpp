@@ -13,10 +13,10 @@ class mpfrfloat {
   }
   ~mpfrfloat() { mpfr_clear(mpfr); }
   mpfrfloat(mpfr_t w) { mpfr[0] = w[0]; }
-  mpfrfloat(flt _f) {
-    mpfr_init2(mpfr, PREC);
-    mpfr_set_d(mpfr, _f, RND);
-  }
+  // mpfrfloat(flt _f) {
+  //   mpfr_init2(mpfr, PREC);
+  //   mpfr_set_d(mpfr, _f, RND);
+  // }
   mpfrfloat(double _f) {
     mpfr_init2(mpfr, PREC);
     mpfr_set_d(mpfr, _f, RND);
@@ -29,7 +29,7 @@ class mpfrfloat {
     mpfr_init2(mpfr, PREC);
     mpfr_init_set_ui(mpfr, i, RND);
   }
-  operator double() const { return mpfr_get_d(mpfr, RND); }
+  explicit operator double() const { return mpfr_get_d(mpfr, RND); }
   mpfrfloat& operator+=(const mpfrfloat& o) {
     mpfr_add(mpfr, mpfr, o.mpfr, RND);
     return *this;
@@ -40,3 +40,71 @@ class mpfrfloat {
   }
   mpfr_t mpfr;
 };
+
+template <int PREC, mpfr_rnd_t RND>
+mpfrfloat<PREC, RND> operator+(const mpfrfloat<PREC, RND>& lhs,
+                               const mpfrfloat<PREC, RND>& rhs) {
+  mpfr_t result;
+  mpfr_init2(result, PREC);
+  mpfr_add(result, lhs.mpfr, rhs.mpfr, RND);
+  return mpfrfloat<PREC, RND>(result);
+}
+
+template <int PREC, mpfr_rnd_t RND>
+mpfrfloat<PREC, RND> operator-(const mpfrfloat<PREC, RND>& lhs,
+                               const mpfrfloat<PREC, RND>& rhs) {
+  mpfr_t result;
+  mpfr_init2(result, PREC);
+  mpfr_sub(result, lhs.mpfr, rhs.mpfr, RND);
+  return mpfrfloat<PREC, RND>(result);
+}
+
+template <int PREC, mpfr_rnd_t RND>
+mpfrfloat<PREC, RND> operator*(const mpfrfloat<PREC, RND>& lhs,
+                               const mpfrfloat<PREC, RND>& rhs) {
+  mpfr_t result;
+  mpfr_init2(result, PREC);
+  mpfr_mul(result, lhs.mpfr, rhs.mpfr, RND);
+  return mpfrfloat<PREC, RND>(result);
+}
+
+template <int PREC, mpfr_rnd_t RND>
+bool operator<(const mpfrfloat<PREC, RND>& lhs,
+               const mpfrfloat<PREC, RND>& rhs) {
+  return mpfr_cmp(lhs.mpfr, rhs.mpfr) < 0;
+}
+
+template <int PREC, mpfr_rnd_t RND>
+bool operator<(const mpfrfloat<PREC, RND>& lhs, double rhs) {
+  return mpfr_cmp_d(lhs.mpfr, rhs) < 0;
+}
+
+template <int PREC, mpfr_rnd_t RND>
+bool operator>(const mpfrfloat<PREC, RND>& lhs, double rhs) {
+  return mpfr_cmp_d(lhs.mpfr, rhs) > 0;
+}
+
+template <int PREC, mpfr_rnd_t RND>
+bool operator>(const mpfrfloat<PREC, RND>& lhs,
+               const mpfrfloat<PREC, RND>& rhs) {
+  return mpfr_cmp(lhs.mpfr, rhs.mpfr) > 0;
+}
+
+template <int PREC, mpfr_rnd_t RND>
+bool operator==(const mpfrfloat<PREC, RND>& lhs,
+                const mpfrfloat<PREC, RND>& rhs) {
+  return mpfr_cmp(lhs.mpfr, rhs.mpfr) == 0;
+}
+
+template <int PREC, mpfr_rnd_t RND>
+bool operator!=(const mpfrfloat<PREC, RND>& lhs,
+                const mpfrfloat<PREC, RND>& rhs) {
+  return mpfr_cmp(lhs.mpfr, rhs.mpfr) != 0;
+}
+
+template <int PREC, mpfr_rnd_t RND>
+std::ostream& operator<<(std::ostream& os, const mpfrfloat<PREC, RND>& rhs) {
+  char str[32];
+  mpfr_sprintf(str, "%Re", rhs.mpfr);
+  return os << str;
+}

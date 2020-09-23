@@ -7,10 +7,11 @@ if(${CMAKE_CROSSCOMPILING})
     include(SDL2/sdl2-config)
 else()
     include(SDL2/SDL2Targets)
-    set(SDL2_LIBS SDL2::SDL2)
+    set(SDL2_LIBS SDL2::SDL2 SDL2_ttf)
 endif()
 
 find_library(LIBGMP NAMES gmp)
+find_library(LIBGMPXX NAMES gmpxx)
 find_library(LIBMPFR NAMES mpfr)
 
 find_package(Threads REQUIRED)
@@ -29,10 +30,9 @@ HAVE_FLOAT80=$<BOOL:${HAVE_FLOAT80}>
 HAVE_FLOAT128=$<BOOL:${HAVE_FLOAT128}>
 HAVE_LIBGMP=$<BOOL:${LIBGMP}>)
 add_compile_options(-std=c++17 -Wall -Wextra)
-add_compile_options(-ffast-math)
+# add_compile_options(-ffast-math)
 
 add_executable(mandelbrot mandelbrot.cpp)
-
 
 # target_compile_definitions(mandelbrot PUBLIC -DHAVE_LONG_DOUBLE=$<BOOL:${HAVE_LONG_DOUBLE}>)
 # target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT80=$<BOOL:${HAVE_FLOAT80}>)
@@ -53,12 +53,15 @@ add_executable(benchmark benchmark.cpp)
 target_compile_options(benchmark PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 target_link_options(benchmark PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 
+add_executable(unittest unittest.cpp)
 
 if(LIBGMP)
-target_link_libraries(mandelbrot PUBLIC "${LIBGMP}")
-target_link_libraries(benchmark PUBLIC "${LIBGMP}")
+target_link_libraries(mandelbrot PUBLIC ${LIBGMP} ${LIBGMPXX})
+target_link_libraries(benchmark PUBLIC ${LIBGMP} ${LIBGMPXX})
+target_link_libraries(unittest PUBLIC ${LIBGMP} ${LIBGMPXX})
 endif()
 if(LIBMPFR)
 target_link_libraries(mandelbrot PUBLIC "${LIBMPFR}")
 target_link_libraries(benchmark PUBLIC "${LIBMPFR}")
+target_link_libraries(unittest PUBLIC "${LIBMPFR}")
 endif()

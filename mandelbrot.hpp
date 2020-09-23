@@ -13,9 +13,9 @@
 
 const int LIMIT = 2048;
 
-template<typename FLT>
+template <typename FLT>
 double get_double(const FLT& f) {
-    return double(f);
+  return double(f);
 }
 
 /**
@@ -61,7 +61,7 @@ template <typename FLT>
 iter_result<FLT> iter(FLT xc, FLT yc) {
   FLT x = xc;
   FLT y = yc;
-  if (isinside(xc, yc)) return {LIMIT, 0, 0};
+  if (isinside(xc, yc)) return {LIMIT, FLT(0), FLT(0)};
 
   unsigned int iterations = 0;
   FLT x2 = x * x;
@@ -92,4 +92,4 @@ double fraction(FLT zx2, FLT zy2) {
          log(log(get_double(zx2) + get_double(zy2))) * log2Inverse;
 }
 
-#endif // _mandelbrot_hpp
+#endif  // _mandelbrot_hpp

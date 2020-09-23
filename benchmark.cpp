@@ -10,13 +10,29 @@
 double get_double(const mpf_class& f) { return f.get_d(); }
 #endif
 
+#include "doubledouble.hpp"
 #include "mpfrfloat.hpp"
 
 static const int MIN_DURATION = 1000;
 static const int INNER_ITERATIONS = 32768;
 
+std::ostream& operator<<(std::ostream& os, const __float128 rhs) {
+  return os << (long double)rhs;
+}
+
 template <typename FLT>
-void benchmark(const char* type, double xc0, double yc0) {
+FLT approxepsilon() {
+  FLT one{1.0};
+  FLT epsilon{1.0};
+  FLT half{0.5};
+  while (one + half * epsilon != one) {
+    epsilon = half * epsilon;
+  }
+  return epsilon;
+}
+
+template <typename FLT>
+void benchmark(const char* type) {
   // FLT xc = FLT(xc0);
   // FLT yc = FLT(yc0);
 
@@ -42,6 +58,9 @@ void benchmark(const char* type, double xc0, double yc0) {
       std::cout << "\r" << sum / iterations << " - " << type << ": "
                 << iterations_per_millisecond << " iteration/msec";
       std::cout << " " << iterations << " in " << duration << " milliseconds";
+      std::cout << ",size=" << sizeof(FLT)
+                << ",epsilon=" << std::numeric_limits<FLT>::epsilon();
+      std::cout << ",aepsilon=" << approxepsilon<FLT>();
       std::cout << std::endl;
       break;
     } else if (duration <= 8) {
@@ -52,34 +71,41 @@ void benchmark(const char* type, double xc0, double yc0) {
   }
 }
 
-#define BENCHMARK(type) benchmark<type>(#type, xc, yc)
+#define BENCHMARK(type) benchmark<type>(#type)
 
 int main(int argc, char** argv) {
   (void)argc;
   (void)argv;
   srand(time(NULL));
-  double xc = 0.01 + (0.1 * rand() / RAND_MAX);
-  double yc = 0.01 + (0.1 * rand() / RAND_MAX);
 
-  benchmark<float>("float", xc, yc);
-  benchmark<double>("double", xc, yc);
   BENCHMARK(float);
   BENCHMARK(double);
 #if HAVE_FLOAT80
   BENCHMARK(__float80);
 #endif
+  BENCHMARK(doubledouble<float>);
+  BENCHMARK(doubledouble<double>);
 #if HAVE_FLOAT128
   BENCHMARK(__float128);
 #endif
+#if HAVE_LONG_DOUBLE
+  BENCHMARK(long double);
+#endif
+  BENCHMARK(doubledouble<long double>);
+  BENCHMARK(doubledouble<__float80>);
+  BENCHMARK(doubledouble<__float128>);
 #if HAVE_LIBGMP
-  BENCHMARK(gmpfloat);
+  BENCHMARK(gmpfloat<128>);
+  BENCHMARK(gmpfloat<256>);
   BENCHMARK(mpf_class);
 #endif
-  benchmark<mpfrfloat<256, MPFR_RNDN>>("mpfrfloat<256, MPFR_RNDN>", xc, yc);
-  benchmark<mpfrfloat<256, MPFR_RNDZ>>("mpfrfloat<256, MPFR_RNDZ>", xc, yc);
-  benchmark<mpfrfloat<256, MPFR_RNDU>>("mpfrfloat<256, MPFR_RNDU>", xc, yc);
-  benchmark<mpfrfloat<256, MPFR_RNDD>>("mpfrfloat<256, MPFR_RNDD>", xc, yc);
-  benchmark<mpfrfloat<256, MPFR_RNDA>>("mpfrfloat<256, MPFR_RNDA>", xc, yc);
-  benchmark<mpfrfloat<256, MPFR_RNDF>>("mpfrfloat<256, MPFR_RNDF>", xc, yc);
-  benchmark<mpfrfloat<256, MPFR_RNDNA>>("mpfrfloat<256, MPFR_RNDNA>", xc, yc);
+  benchmark<mpfrfloat<128, MPFR_RNDN>>("mpfrfloat<128, MPFR_RNDN>");
+  benchmark<mpfrfloat<128, MPFR_RNDZ>>("mpfrfloat<128, MPFR_RNDZ>");
+  benchmark<mpfrfloat<256, MPFR_RNDN>>("mpfrfloat<256, MPFR_RNDN>");
+  benchmark<mpfrfloat<256, MPFR_RNDZ>>("mpfrfloat<256, MPFR_RNDZ>");
+  // benchmark<mpfrfloat<256, MPFR_RNDU>>("mpfrfloat<256, MPFR_RNDU>");
+  // benchmark<mpfrfloat<256, MPFR_RNDD>>("mpfrfloat<256, MPFR_RNDD>");
+  // benchmark<mpfrfloat<256, MPFR_RNDA>>("mpfrfloat<256, MPFR_RNDA>");
+  // benchmark<mpfrfloat<256, MPFR_RNDF>>("mpfrfloat<256, MPFR_RNDF>");
+  // benchmark<mpfrfloat<256, MPFR_RNDNA>>("mpfrfloat<256, MPFR_RNDNA>");
 }

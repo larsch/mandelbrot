@@ -6,7 +6,10 @@
  * Copyright 2020 by Lars Christensen <larsch@belunktum.dk>
  */
 
+#include "mandelbrot.hpp"
+
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 #include <atomic>
 #include <cassert>
@@ -14,21 +17,27 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <thread>
 #include <vector>
 
-#include "float.hpp"
-#include "semaphore.hpp"
-#include "mandelbrot.hpp"
 #if HAVE_LIBGMP
 #include "gmpfloat.hpp"
 #endif
+#if HAVE_LIBMPFR
+#include "mpfrfloat.hpp"
+#endif
+#include "doubledouble.hpp"
+#include "float.hpp"
+#include "semaphore.hpp"
+
+static TTF_Font *font;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-static const float zoom_factor = 0.75;
+static const float zoom_factor = 0.9;
 
 #if 0
 static std::mutex log_mutex;
@@ -43,9 +52,57 @@ static std::mutex log_mutex;
 
 SDL_PixelFormatEnum pixel_format = SDL_PIXELFORMAT_ARGB8888;
 
-static flt center_x = -0.60;
-static flt center_y = 0;
-static flt screen_size = 2.0;
+static flt center_x{-0.60};
+static flt center_y{0};
+static flt screen_size{2.0};
+
+enum FloatType {
+  FT_AUTO,
+  FT_FLOAT,
+  FT_DOUBLE,
+  FT_DOUBLEDOUBLE,
+#if HAVE_FLOAT80
+  FT_FLOAT80,
+  FT_DOUBLEFLOAT80,
+#endif
+#if HAVE_FLOAT128
+  FT_FLOAT128,
+  FT_DOUBLEFLOAT128,
+#endif
+#if HAVE_LONG_DOUBLE
+  FT_LONG_DOUBLE,
+// FT_DOUBLELONG_DOUBLE,
+#endif
+#if HAVE_LIBGMP
+  FT_GMPFLOAT,
+#endif
+#if HAVE_LIBMPFR
+  FT_MPFRFLOAT128,
+  FT_MPFRFLOAT256,
+#endif
+  FT_MAX
+};
+
+const char *floattypenames[] = {
+    "auto",           "float",
+    "double",         "doubledouble<double>",
+#if HAVE_FLOAT80
+    "__float80",      "doubledouble<__float80>",
+#endif
+#if HAVE_FLOAT128
+    "__float128",     "doubledouble<__float128>",
+#endif
+#if HAVE_LONG_DOUBLE
+    "long double",
+// FT_DOUBLELONG_DOUBLE,
+#endif
+#if HAVE_LIBGMP
+    "gmpfloat",
+#endif
+#if HAVE_LIBMPFR
+    "mpfrfloat<128>", "mpfrfloat<256>",
+#endif
+};
 
 static uint8_t *pixels = nullptr;
 static int w;
@@ -63,7 +120,8 @@ static bool rendering = false;
 static std::atomic_bool running = true;
 static int jobs_remaining = 0;
 static std::chrono::time_point<std::chrono::high_resolution_clock> start;
-static int algorithm = 0;
+static FloatType algorithm = FT_AUTO;
+static FloatType run_algorithm = FT_AUTO;
 
 #define RGB(r, g, b) (((r) << 16) | ((g) << 8) | ((b)))
 
@@ -170,7 +228,6 @@ void load(int slot) {
   screen_size = saves[slot].s;
 }
 
-
 uint32_t blend(uint32_t c1, uint32_t c2, float f) {
   uint8_t r1 = c1 >> 24;
   uint8_t g1 = (c1 >> 16) & 0xff;
@@ -195,9 +252,9 @@ uint32_t blend(uint32_t c1, uint32_t c2, float f) {
 #include <typeinfo>
 template <typename FLT>
 void render_rowx(int row) {
-  const FLT scl = pixel_size;
-  const FLT minx = min_x;
-  const FLT miny = min_y;
+  const FLT scl{pixel_size};
+  const FLT minx{min_x};
+  const FLT miny{min_y};
   row = maprow(row);
   if (row < rows) {
     FLT yc = miny + FLT(row) * scl;
@@ -241,46 +298,79 @@ bool try_render(int row) {
   }
 }
 
+template <typename FLT>
+double epsilon() {
+  return double(std::numeric_limits<FLT>::epsilon());
+};
+
+// template<>
+// flt epsilon<
+
+FloatType determine_type() {
+  if (pixel_size > epsilon<float>()) return FT_FLOAT;
+  if (pixel_size > epsilon<double>()) return FT_DOUBLE;
+  if (pixel_size > epsilon<__float80>()) return FT_FLOAT80;
+  if (pixel_size > epsilon<doubledouble<double>>()) return FT_DOUBLEDOUBLE;
+  if (pixel_size > epsilon<__float128>()) return FT_FLOAT128;
+  if (pixel_size > epsilon<long double>()) return FT_LONG_DOUBLE;
+  if (pixel_size > epsilon<doubledouble<__float80>>()) return FT_DOUBLEFLOAT80;
+  if (pixel_size > epsilon<doubledouble<long double>>()) return FT_LONG_DOUBLE;
+  if (pixel_size > epsilon<doubledouble<__float128>>())
+    return FT_DOUBLEFLOAT128;
+  return FT_GMPFLOAT;
+}
+
 /**
  * Render specified row using selected algorithm.
  */
 #include <cfloat>
 void render_row(int row) {
-  switch (algorithm) {
-    case 0:
-      try_render<float>(row) || try_render<double>(row) ||
-#if HAVE_LONG_DOUBLE
-          try_render<long double>(row) ||
-#endif  // HAVE_LONG_DOUBLE
-#if HAVE_FLOAT80
-          try_render<__float80>(row) ||
-#endif  // HAVE_FLOATT80
-#if HAVE_FLOAT128
-          try_render<__float128>(row) ||
-#endif  // HAVE_FLOATT80
-          (render_rowx<flt>(row), true);
-      break;
-    case 1:
+  switch (run_algorithm) {
+    case FT_FLOAT:
       render_rowx<float>(row);
       break;
-    case 2:
+    case FT_DOUBLE:
       render_rowx<double>(row);
       break;
+    case FT_DOUBLEDOUBLE:
+      render_rowx<doubledouble<double>>(row);
+      break;
 #if HAVE_FLOAT80
-    case 3:
+    case FT_FLOAT80:
       render_rowx<__float80>(row);
+      break;
+    case FT_DOUBLEFLOAT80:
+      render_rowx<doubledouble<__float80>>(row);
       break;
 #endif
 #if HAVE_FLOAT128
-    case 4:
+    case FT_FLOAT128:
       render_rowx<__float128>(row);
+      break;
+    case FT_DOUBLEFLOAT128:
+      render_rowx<doubledouble<__float128>>(row);
+      break;
+#endif
+#if HAVE_LONG_DOUBLE
+    case FT_LONG_DOUBLE:
+      render_rowx<long double>(row);
       break;
 #endif
 #if HAVE_LIBGMP
-    case 5:
-      render_rowx<gmpfloat>(row);
+    case FT_GMPFLOAT:
+      render_rowx<gmpfloat<128>>(row);
       break;
 #endif
+#if HAVE_LIBMPFR
+    case FT_MPFRFLOAT128:
+      render_rowx<mpfrfloat<128>>(row);
+      break;
+    case FT_MPFRFLOAT256:
+      render_rowx<mpfrfloat<256>>(row);
+      break;
+#endif
+    default:
+      abort();
   }
 }
 
@@ -288,9 +378,10 @@ void render_row(int row) {
  * Start render
  */
 void start_render() {
-  pixel_size = screen_size / rows;
-  min_x = center_x - w * pixel_size / 2.0;
-  min_y = center_y - rows * pixel_size / 2.0;
+  pixel_size = screen_size / flt(rows);
+  run_algorithm = algorithm == FT_AUTO ? determine_type() : algorithm;
+  min_x = center_x - w * pixel_size / flt(2.0);
+  min_y = center_y - rows * pixel_size / flt(2.0);
   row_bits = log2(rows) + 1;
   virtual_rows = 1 << row_bits;
   jobs_left.release(virtual_rows);
@@ -411,6 +502,31 @@ void mandelbrot_application::run() {
         memcpy(pix, pixels, width * h * 4);
         SDL_UnlockTexture(texture);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
+
+        {
+          auto text_surface = TTF_RenderUTF8_Blended(
+              font, floattypenames[run_algorithm], SDL_Color{255, 255, 255, 0});
+          auto text_texture =
+              SDL_CreateTextureFromSurface(renderer, text_surface);
+          SDL_Rect dest_rect{0, 0, text_surface->w, text_surface->h};
+          SDL_RenderCopy(renderer, text_texture, 0, &dest_rect);
+          SDL_DestroyTexture(text_texture);
+          SDL_FreeSurface(text_surface);
+        }
+
+        {
+          std::ostringstream ostr;
+          ostr << screen_size;
+          auto text_surface = TTF_RenderUTF8_Blended(
+              font, ostr.str().c_str(), SDL_Color{255, 255, 255, 0});
+          auto text_texture =
+              SDL_CreateTextureFromSurface(renderer, text_surface);
+          SDL_Rect dest_rect{0, 30, text_surface->w, text_surface->h};
+          SDL_RenderCopy(renderer, text_texture, 0, &dest_rect);
+          SDL_DestroyTexture(text_texture);
+          SDL_FreeSurface(text_surface);
+        }
+
         SDL_RenderPresent(renderer);
         update_surface = false;
       }
@@ -465,20 +581,12 @@ void mandelbrot_application::run() {
           keep_running = SDL_FALSE;
         } else if (e.key.keysym.mod == KMOD_LSHIFT ||
                    e.key.keysym.mod == KMOD_RSHIFT) {
-          if (e.key.keysym.sym == SDLK_1) {
-            algorithm = 1;
+          if (e.key.keysym.sym == SDLK_0) {
+            algorithm = FT_AUTO;
             restart_render = true;
-          } else if (e.key.keysym.sym == SDLK_2) {
-            algorithm = 2;
-            restart_render = true;
-          } else if (e.key.keysym.sym == SDLK_3) {
-            algorithm = 3;
-            restart_render = true;
-          } else if (e.key.keysym.sym == SDLK_4) {
-            algorithm = 4;
-            restart_render = true;
-          } else if (e.key.keysym.sym == SDLK_5) {
-            algorithm = 5;
+          } else if (e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_9) {
+            int num = e.key.keysym.sym - SDLK_1 + 1;
+            if (num < FT_MAX) algorithm = FloatType(num);
             restart_render = true;
           }
         } else if (e.key.keysym.mod == KMOD_LCTRL ||
@@ -526,18 +634,18 @@ void mandelbrot_application::zoom(int x, int y, float scale) {
   SDL_GetWindowSize(window, &width, &height);
   int ofsx = x - width / 2;
   int ofsy = y - height / 2;
-  flt old_pixel_size = screen_size / height;
-  screen_size *= scale;
-  flt new_pixel_size = screen_size / height;
+  flt old_pixel_size = screen_size / flt(height);
+  screen_size *= flt(scale);
+  flt new_pixel_size = screen_size / flt(height);
 
-  flt left = center_x - width * old_pixel_size / 2.0;
-  flt top = center_y - height * old_pixel_size / 2.0;
+  flt left = center_x - width * old_pixel_size * flt(0.5);
+  flt top = center_y - height * old_pixel_size * flt(0.5);
 
   center_x = center_x + ofsx * old_pixel_size - ofsx * new_pixel_size;
   center_y = center_y + ofsy * old_pixel_size - ofsy * new_pixel_size;
 
-  flt x1 = width / 2.0 - (center_x - left) / new_pixel_size;
-  flt y1 = height / 2.0 - (center_y - top) / new_pixel_size;
+  flt x1 = width * flt(0.5) - (center_x - left) / new_pixel_size;
+  flt y1 = height * flt(0.5) - (center_y - top) / new_pixel_size;
 
   SDL_Texture *back = SDL_CreateTexture(
       renderer, pixel_format, SDL_TEXTUREACCESS_TARGET, width, height);
@@ -562,6 +670,11 @@ mandelbrot_application::~mandelbrot_application() {
 int main(int argc, char **argv) {
   (void)argc;
   (void)argv;
+
+  TTF_Init();
+  font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSans-Bold.ttf", 16);
+  TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
+
   try {
     mandelbrot_application app;
     app.run();
