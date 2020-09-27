@@ -286,7 +286,9 @@ void render_rowx(int row) {
   }
 
   SDL_Event event;
+  memset(&event, 0, sizeof(event));
   event.type = ROWRENDER_COMPLETE_EVENT;
+  event.user.code = row;
   SDL_PushEvent(&event);
 }
 
@@ -487,6 +489,9 @@ mandelbrot_application::mandelbrot_application() {
 void mandelbrot_application::run() {
   bool keep_running = true;
 
+  std::array<int, 32> rows_completed;
+  unsigned int rows_completed_count = 0;
+
   const int thread_count = 8;
   std::vector<std::thread> threads;
   for (int i = 0; i < thread_count; ++i) {
@@ -516,7 +521,19 @@ void mandelbrot_application::run() {
         SDL_LockTexture(texture, NULL, &pix, &texture_pitch);
         int width, h;
         SDL_GetWindowSize(window, &width, &h);
-        memcpy(pix, pixels, width * h * 4);
+        if (rows_completed_count == rows_completed.max_size()) {
+          std::cout << "copy all rows" << std::endl;
+          memcpy(pix, pixels, width * h * 4);
+        } else {
+          std::cout << "copy " << rows_completed_count << " rows" << std::endl;
+          for (unsigned int i = 0; i < rows_completed_count; ++i) {
+            int row = rows_completed[i];
+            int pixels_pitch = width * 4;
+            memcpy((uint8_t *)pix + texture_pitch * row,
+                   pixels + pixels_pitch * row, width * 4);
+          }
+        }
+        rows_completed_count = 0;
         SDL_UnlockTexture(texture);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
 
@@ -565,7 +582,14 @@ void mandelbrot_application::run() {
                               .count();
           std::cout << "render complete in " << duration << " ms" << std::endl;
         }
-        update_surface = true;
+        {
+          int row = e.user.code;
+          if (row < rows) {
+            if (rows_completed_count < rows_completed.max_size())
+              rows_completed[rows_completed_count++] = e.user.code;
+            update_surface = true;
+          }
+        }
         break;
       case SDL_QUIT:
         keep_running = false;
