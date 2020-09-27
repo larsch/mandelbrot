@@ -2,9 +2,12 @@
 #include <ctime>
 #include <iostream>
 
-#include "mandelbrot.hpp"
 #if HAVE_LIBGMP
 #include <gmpxx.h>
+
+namespace std {
+mpf_class abs(mpf_class f) { return ::abs(f); }
+}  // namespace std
 
 #include "gmpfloat.hpp"
 double get_double(const mpf_class& f) { return f.get_d(); }
@@ -12,13 +15,11 @@ double get_double(const mpf_class& f) { return f.get_d(); }
 
 #include "doubledouble.hpp"
 #include "mpfrfloat.hpp"
+#include "mandelbrot.hpp"
+#include "strop.hpp"
 
 static const int MIN_DURATION = 1000;
 static const int INNER_ITERATIONS = 32768;
-
-std::ostream& operator<<(std::ostream& os, const __float128 rhs) {
-  return os << (long double)rhs;
-}
 
 template <typename FLT>
 FLT approxepsilon() {
@@ -33,9 +34,6 @@ FLT approxepsilon() {
 
 template <typename FLT>
 void benchmark(const char* type) {
-  // FLT xc = FLT(xc0);
-  // FLT yc = FLT(yc0);
-
   std::cout << type << ": " << std::flush;
   int iterations = 16;
   while (true) {

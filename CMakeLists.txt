@@ -28,8 +28,9 @@ message("sizeof(__float128) = ${FLOAT128}")
 add_compile_definitions(HAVE_LONG_DOUBLE=$<BOOL:${HAVE_LONG_DOUBLE}>
 HAVE_FLOAT80=$<BOOL:${HAVE_FLOAT80}>
 HAVE_FLOAT128=$<BOOL:${HAVE_FLOAT128}>
-HAVE_LIBGMP=$<BOOL:${LIBGMP}>)
-add_compile_options(-std=c++17 -Wall -Wextra)
+HAVE_LIBGMP=$<BOOL:${LIBGMP}>
+MPFR_WANT_FLOAT128=1)
+add_compile_options(-std=c++17 -Wall -Wextra -Warith-conversion)
 # add_compile_options(-ffast-math)
 
 add_executable(mandelbrot mandelbrot.cpp)
@@ -48,6 +49,7 @@ target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 target_link_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 
 target_link_libraries(mandelbrot PUBLIC "${SDL2_LIBS}" Threads::Threads)
+target_link_libraries(mandelbrot PUBLIC quadmath)
 
 add_executable(benchmark benchmark.cpp)
 target_compile_options(benchmark PUBLIC "$<$<CONFIG:RELEASE>:-flto>")

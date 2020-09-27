@@ -1,0 +1,531 @@
+Script started on 2020-09-27 10:50:23+02:00 [TERM="xterm-kitty" TTY="/dev/pts/0" COLUMNS="191" LINES="48"]
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m[39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[?1h[?2004h[?1l[?2004l
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m[39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[?1h[?2004h[?1l[?2004l
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m[39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[?1h[?2004hpstree|less[?2004l
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m130 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004hsscren  ipt -qfce "make" /dev/null[?1l[?2004l[K
+]0;larsch@t495arch: script -qfce "make" /dev/nullzsh:1: command not found: e
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m[39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[?1h[?2004hscript -qfce "make" /dev/null[29D[7C[7Cbce "make" /dev/null[19D[P[19C [20Defce "make" /dev/null[20D[1C[1C[P[17C [18D[?1l[?2004l
+]0;larsch@t495arch: script -qefc "make" /dev/null[ 33%] Built target unittest
+[ 50%] [32mBuilding CXX object CMakeFiles/benchmark.dir/benchmark.cpp.o[0m
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:[m[K In function ‘[01m[Kbool isinside(FLT, FLT)[m[K’:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:35:22:[m[K [01;31m[Kerror: [m[Kqualified-id in declaration before ‘[01m[K([m[K’ token
+   35 |   extern FLT std::abs[01;31m[K([m[Kconst FLT&);
+      |                      [01;31m[K^[m[K
+/home/larsch/prj/mandelbrot/mandelbrot.hpp: In instantiation of ‘[01m[Kbool isinside(FLT, FLT) [with FLT = mpfrfloat<128, MPFR_RNDN>][m[K’:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:72:15:[m[K   required from ‘[01m[Kiter_result<FLT> iter(FLT, FLT) [with FLT = mpfrfloat<128, MPFR_RNDN>][m[K’
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:49:27:[m[K   required from ‘[01m[Kvoid benchmark(const char*) [with FLT = mpfrfloat<128, MPFR_RNDN>][m[K’
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:103:67:[m[K   required from here
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[Kabs(mpfrfloat<128, MPFR_RNDN>&)[m[K’
+   36 |   FLT absy = [01;31m[Kstd::abs(y)[m[K;
+      |              [01;31m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/usr/include/c++/10.2.0/cstdlib:75[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/string:55[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ios:42[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ostream:38[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/iostream:39[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[m[K:
+[01m[K/usr/include/stdlib.h:840:12:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kint abs(int)[m[K’
+  840 | extern int [01;36m[Kabs[m[K (int __x) __THROW __attribute__ ((__const__)) __wur;
+      |            [01;36m[K^~~[m[K
+[01m[K/usr/include/stdlib.h:840:21:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ to ‘[01m[Kint[m[K’
+  840 | extern int abs ([01;36m[Kint __x[m[K) __THROW __attribute__ ((__const__)) __wur;
+      |                 [01;36m[K~~~~^~~[m[K
+In file included from [01m[K/usr/include/c++/10.2.0/cstdlib:77[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/string:55[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ios:42[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ostream:38[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/iostream:39[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[m[K:
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Klong int std::abs(long int)[m[K’
+   56 |   [01;36m[Kabs[m[K(long __i) { return __builtin_labs(__i); }
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:12:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ to ‘[01m[Klong int[m[K’
+   56 |   abs([01;36m[Klong __i[m[K) { return __builtin_labs(__i); }
+      |       [01;36m[K~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:61:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Klong long int std::abs(long long int)[m[K’
+   61 |   [01;36m[Kabs[m[K(long long __x) { return __builtin_llabs (__x); }
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:61:17:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ to ‘[01m[Klong long int[m[K’
+   61 |   abs([01;36m[Klong long __x[m[K) { return __builtin_llabs (__x); }
+      |       [01;36m[K~~~~~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:71:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr double std::abs(double)[m[K’
+   71 |   [01;36m[Kabs[m[K(double __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:71:14:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ to ‘[01m[Kdouble[m[K’
+   71 |   abs([01;36m[Kdouble __x[m[K)
+      |       [01;36m[K~~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:75:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr float std::abs(float)[m[K’
+   75 |   [01;36m[Kabs[m[K(float __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:75:13:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ to ‘[01m[Kfloat[m[K’
+   75 |   abs([01;36m[Kfloat __x[m[K)
+      |       [01;36m[K~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:79:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr long double std::abs(long double)[m[K’
+   79 |   [01;36m[Kabs[m[K(long double __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:79:19:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ to ‘[01m[Klong double[m[K’
+   79 |   abs([01;36m[Klong double __x[m[K)
+      |       [01;36m[K~~~~~~~~~~~~^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:9:11:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kmpf_class std::abs(mpf_class)[m[K’
+    9 | mpf_class [01;36m[Kabs[m[K(mpf_class f) { return ::abs(f); }
+      |           [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:9:25:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ to ‘[01m[Kmpf_class[m[K’
+    9 | mpf_class abs([01;36m[Kmpf_class f[m[K) { return ::abs(f); }
+      |               [01;36m[K~~~~~~~~~~^[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:17[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:12[m[K:
+[01m[K/home/larsch/prj/mandelbrot/doubledouble.hpp:153:19:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<class FLT> doubledouble<FLT> std::abs(const doubledouble<FLT>&)[m[K’
+  153 | doubledouble<FLT> [01;36m[Kabs[m[K(const doubledouble<FLT>& f) {
+      |                   [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/doubledouble.hpp:153:19:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;36m[Knote: [m[K  ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ is not derived from ‘[01m[Kconst doubledouble<FLT>[m[K’
+   36 |   FLT absy = [01;36m[Kstd::abs(y)[m[K;
+      |              [01;36m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:12[m[K:
+[01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:288:16:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<long unsigned int PREC> gmpfloat<PREC> std::abs(const gmpfloat<PREC>&)[m[K’
+  288 | gmpfloat<PREC> [01;36m[Kabs[m[K(const gmpfloat<PREC>& f) {
+      |                [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:288:16:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;36m[Knote: [m[K  ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ is not derived from ‘[01m[Kconst gmpfloat<PREC>[m[K’
+   36 |   FLT absy = [01;36m[Kstd::abs(y)[m[K;
+      |              [01;36m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:14[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/floatext.hpp:16:12:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[K__float128 std::abs(__float128)[m[K’
+   16 | __float128 [01;36m[Kabs[m[K(__float128 flt) {
+      |            [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/floatext.hpp:16:27:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDN>[m[K’ to ‘[01m[K__float128[m[K’
+   16 | __float128 abs([01;36m[K__float128 flt[m[K) {
+      |                [01;36m[K~~~~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+/home/larsch/prj/mandelbrot/mandelbrot.hpp: In instantiation of ‘[01m[Kbool isinside(FLT, FLT) [with FLT = mpfrfloat<128, MPFR_RNDZ>][m[K’:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:72:15:[m[K   required from ‘[01m[Kiter_result<FLT> iter(FLT, FLT) [with FLT = mpfrfloat<128, MPFR_RNDZ>][m[K’
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:49:27:[m[K   required from ‘[01m[Kvoid benchmark(const char*) [with FLT = mpfrfloat<128, MPFR_RNDZ>][m[K’
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:104:67:[m[K   required from here
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[Kabs(mpfrfloat<128, MPFR_RNDZ>&)[m[K’
+   36 |   FLT absy = [01;31m[Kstd::abs(y)[m[K;
+      |              [01;31m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/usr/include/c++/10.2.0/cstdlib:75[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/string:55[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ios:42[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ostream:38[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/iostream:39[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[m[K:
+[01m[K/usr/include/stdlib.h:840:12:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kint abs(int)[m[K’
+  840 | extern int [01;36m[Kabs[m[K (int __x) __THROW __attribute__ ((__const__)) __wur;
+      |            [01;36m[K^~~[m[K
+[01m[K/usr/include/stdlib.h:840:21:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ to ‘[01m[Kint[m[K’
+  840 | extern int abs ([01;36m[Kint __x[m[K) __THROW __attribute__ ((__const__)) __wur;
+      |                 [01;36m[K~~~~^~~[m[K
+In file included from [01m[K/usr/include/c++/10.2.0/cstdlib:77[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/string:55[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ios:42[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ostream:38[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/iostream:39[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[m[K:
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Klong int std::abs(long int)[m[K’
+   56 |   [01;36m[Kabs[m[K(long __i) { return __builtin_labs(__i); }
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:12:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ to ‘[01m[Klong int[m[K’
+   56 |   abs([01;36m[Klong __i[m[K) { return __builtin_labs(__i); }
+      |       [01;36m[K~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:61:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Klong long int std::abs(long long int)[m[K’
+   61 |   [01;36m[Kabs[m[K(long long __x) { return __builtin_llabs (__x); }
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:61:17:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ to ‘[01m[Klong long int[m[K’
+   61 |   abs([01;36m[Klong long __x[m[K) { return __builtin_llabs (__x); }
+      |       [01;36m[K~~~~~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:71:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr double std::abs(double)[m[K’
+   71 |   [01;36m[Kabs[m[K(double __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:71:14:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ to ‘[01m[Kdouble[m[K’
+   71 |   abs([01;36m[Kdouble __x[m[K)
+      |       [01;36m[K~~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:75:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr float std::abs(float)[m[K’
+   75 |   [01;36m[Kabs[m[K(float __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:75:13:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ to ‘[01m[Kfloat[m[K’
+   75 |   abs([01;36m[Kfloat __x[m[K)
+      |       [01;36m[K~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:79:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr long double std::abs(long double)[m[K’
+   79 |   [01;36m[Kabs[m[K(long double __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:79:19:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ to ‘[01m[Klong double[m[K’
+   79 |   abs([01;36m[Klong double __x[m[K)
+      |       [01;36m[K~~~~~~~~~~~~^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:9:11:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kmpf_class std::abs(mpf_class)[m[K’
+    9 | mpf_class [01;36m[Kabs[m[K(mpf_class f) { return ::abs(f); }
+      |           [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:9:25:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ to ‘[01m[Kmpf_class[m[K’
+    9 | mpf_class abs([01;36m[Kmpf_class f[m[K) { return ::abs(f); }
+      |               [01;36m[K~~~~~~~~~~^[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:17[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:12[m[K:
+[01m[K/home/larsch/prj/mandelbrot/doubledouble.hpp:153:19:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<class FLT> doubledouble<FLT> std::abs(const doubledouble<FLT>&)[m[K’
+  153 | doubledouble<FLT> [01;36m[Kabs[m[K(const doubledouble<FLT>& f) {
+      |                   [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/doubledouble.hpp:153:19:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;36m[Knote: [m[K  ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ is not derived from ‘[01m[Kconst doubledouble<FLT>[m[K’
+   36 |   FLT absy = [01;36m[Kstd::abs(y)[m[K;
+      |              [01;36m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:12[m[K:
+[01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:288:16:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<long unsigned int PREC> gmpfloat<PREC> std::abs(const gmpfloat<PREC>&)[m[K’
+  288 | gmpfloat<PREC> [01;36m[Kabs[m[K(const gmpfloat<PREC>& f) {
+      |                [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:288:16:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;36m[Knote: [m[K  ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ is not derived from ‘[01m[Kconst gmpfloat<PREC>[m[K’
+   36 |   FLT absy = [01;36m[Kstd::abs(y)[m[K;
+      |              [01;36m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:14[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/floatext.hpp:16:12:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[K__float128 std::abs(__float128)[m[K’
+   16 | __float128 [01;36m[Kabs[m[K(__float128 flt) {
+      |            [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/floatext.hpp:16:27:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<128, MPFR_RNDZ>[m[K’ to ‘[01m[K__float128[m[K’
+   16 | __float128 abs([01;36m[K__float128 flt[m[K) {
+      |                [01;36m[K~~~~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+/home/larsch/prj/mandelbrot/mandelbrot.hpp: In instantiation of ‘[01m[Kbool isinside(FLT, FLT) [with FLT = mpfrfloat<256, MPFR_RNDN>][m[K’:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:72:15:[m[K   required from ‘[01m[Kiter_result<FLT> iter(FLT, FLT) [with FLT = mpfrfloat<256, MPFR_RNDN>][m[K’
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:49:27:[m[K   required from ‘[01m[Kvoid benchmark(const char*) [with FLT = mpfrfloat<256, MPFR_RNDN>][m[K’
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:105:67:[m[K   required from here
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[Kabs(mpfrfloat<256, MPFR_RNDN>&)[m[K’
+   36 |   FLT absy = [01;31m[Kstd::abs(y)[m[K;
+      |              [01;31m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/usr/include/c++/10.2.0/cstdlib:75[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/string:55[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ios:42[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ostream:38[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/iostream:39[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[m[K:
+[01m[K/usr/include/stdlib.h:840:12:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kint abs(int)[m[K’
+  840 | extern int [01;36m[Kabs[m[K (int __x) __THROW __attribute__ ((__const__)) __wur;
+      |            [01;36m[K^~~[m[K
+[01m[K/usr/include/stdlib.h:840:21:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ to ‘[01m[Kint[m[K’
+  840 | extern int abs ([01;36m[Kint __x[m[K) __THROW __attribute__ ((__const__)) __wur;
+      |                 [01;36m[K~~~~^~~[m[K
+In file included from [01m[K/usr/include/c++/10.2.0/cstdlib:77[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/string:55[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ios:42[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ostream:38[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/iostream:39[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[m[K:
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Klong int std::abs(long int)[m[K’
+   56 |   [01;36m[Kabs[m[K(long __i) { return __builtin_labs(__i); }
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:12:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ to ‘[01m[Klong int[m[K’
+   56 |   abs([01;36m[Klong __i[m[K) { return __builtin_labs(__i); }
+      |       [01;36m[K~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:61:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Klong long int std::abs(long long int)[m[K’
+   61 |   [01;36m[Kabs[m[K(long long __x) { return __builtin_llabs (__x); }
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:61:17:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ to ‘[01m[Klong long int[m[K’
+   61 |   abs([01;36m[Klong long __x[m[K) { return __builtin_llabs (__x); }
+      |       [01;36m[K~~~~~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:71:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr double std::abs(double)[m[K’
+   71 |   [01;36m[Kabs[m[K(double __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:71:14:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ to ‘[01m[Kdouble[m[K’
+   71 |   abs([01;36m[Kdouble __x[m[K)
+      |       [01;36m[K~~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:75:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr float std::abs(float)[m[K’
+   75 |   [01;36m[Kabs[m[K(float __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:75:13:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ to ‘[01m[Kfloat[m[K’
+   75 |   abs([01;36m[Kfloat __x[m[K)
+      |       [01;36m[K~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:79:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr long double std::abs(long double)[m[K’
+   79 |   [01;36m[Kabs[m[K(long double __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:79:19:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ to ‘[01m[Klong double[m[K’
+   79 |   abs([01;36m[Klong double __x[m[K)
+      |       [01;36m[K~~~~~~~~~~~~^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:9:11:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kmpf_class std::abs(mpf_class)[m[K’
+    9 | mpf_class [01;36m[Kabs[m[K(mpf_class f) { return ::abs(f); }
+      |           [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:9:25:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ to ‘[01m[Kmpf_class[m[K’
+    9 | mpf_class abs([01;36m[Kmpf_class f[m[K) { return ::abs(f); }
+      |               [01;36m[K~~~~~~~~~~^[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:17[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:12[m[K:
+[01m[K/home/larsch/prj/mandelbrot/doubledouble.hpp:153:19:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<class FLT> doubledouble<FLT> std::abs(const doubledouble<FLT>&)[m[K’
+  153 | doubledouble<FLT> [01;36m[Kabs[m[K(const doubledouble<FLT>& f) {
+      |                   [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/doubledouble.hpp:153:19:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;36m[Knote: [m[K  ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ is not derived from ‘[01m[Kconst doubledouble<FLT>[m[K’
+   36 |   FLT absy = [01;36m[Kstd::abs(y)[m[K;
+      |              [01;36m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:12[m[K:
+[01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:288:16:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<long unsigned int PREC> gmpfloat<PREC> std::abs(const gmpfloat<PREC>&)[m[K’
+  288 | gmpfloat<PREC> [01;36m[Kabs[m[K(const gmpfloat<PREC>& f) {
+      |                [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:288:16:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;36m[Knote: [m[K  ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ is not derived from ‘[01m[Kconst gmpfloat<PREC>[m[K’
+   36 |   FLT absy = [01;36m[Kstd::abs(y)[m[K;
+      |              [01;36m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:14[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/floatext.hpp:16:12:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[K__float128 std::abs(__float128)[m[K’
+   16 | __float128 [01;36m[Kabs[m[K(__float128 flt) {
+      |            [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/floatext.hpp:16:27:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDN>[m[K’ to ‘[01m[K__float128[m[K’
+   16 | __float128 abs([01;36m[K__float128 flt[m[K) {
+      |                [01;36m[K~~~~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+/home/larsch/prj/mandelbrot/mandelbrot.hpp: In instantiation of ‘[01m[Kbool isinside(FLT, FLT) [with FLT = mpfrfloat<256, MPFR_RNDZ>][m[K’:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:72:15:[m[K   required from ‘[01m[Kiter_result<FLT> iter(FLT, FLT) [with FLT = mpfrfloat<256, MPFR_RNDZ>][m[K’
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:49:27:[m[K   required from ‘[01m[Kvoid benchmark(const char*) [with FLT = mpfrfloat<256, MPFR_RNDZ>][m[K’
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:106:67:[m[K   required from here
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;31m[Kerror: [m[Kno matching function for call to ‘[01m[Kabs(mpfrfloat<256, MPFR_RNDZ>&)[m[K’
+   36 |   FLT absy = [01;31m[Kstd::abs(y)[m[K;
+      |              [01;31m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/usr/include/c++/10.2.0/cstdlib:75[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/string:55[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ios:42[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ostream:38[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/iostream:39[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[m[K:
+[01m[K/usr/include/stdlib.h:840:12:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kint abs(int)[m[K’
+  840 | extern int [01;36m[Kabs[m[K (int __x) __THROW __attribute__ ((__const__)) __wur;
+      |            [01;36m[K^~~[m[K
+[01m[K/usr/include/stdlib.h:840:21:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ to ‘[01m[Kint[m[K’
+  840 | extern int abs ([01;36m[Kint __x[m[K) __THROW __attribute__ ((__const__)) __wur;
+      |                 [01;36m[K~~~~^~~[m[K
+In file included from [01m[K/usr/include/c++/10.2.0/cstdlib:77[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/string:55[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ios:42[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/ostream:38[m[K,
+                 from [01m[K/usr/include/c++/10.2.0/iostream:39[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[m[K:
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Klong int std::abs(long int)[m[K’
+   56 |   [01;36m[Kabs[m[K(long __i) { return __builtin_labs(__i); }
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:12:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ to ‘[01m[Klong int[m[K’
+   56 |   abs([01;36m[Klong __i[m[K) { return __builtin_labs(__i); }
+      |       [01;36m[K~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:61:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Klong long int std::abs(long long int)[m[K’
+   61 |   [01;36m[Kabs[m[K(long long __x) { return __builtin_llabs (__x); }
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:61:17:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ to ‘[01m[Klong long int[m[K’
+   61 |   abs([01;36m[Klong long __x[m[K) { return __builtin_llabs (__x); }
+      |       [01;36m[K~~~~~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:71:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr double std::abs(double)[m[K’
+   71 |   [01;36m[Kabs[m[K(double __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:71:14:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ to ‘[01m[Kdouble[m[K’
+   71 |   abs([01;36m[Kdouble __x[m[K)
+      |       [01;36m[K~~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:75:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr float std::abs(float)[m[K’
+   75 |   [01;36m[Kabs[m[K(float __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:75:13:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ to ‘[01m[Kfloat[m[K’
+   75 |   abs([01;36m[Kfloat __x[m[K)
+      |       [01;36m[K~~~~~~^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:79:3:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kconstexpr long double std::abs(long double)[m[K’
+   79 |   [01;36m[Kabs[m[K(long double __x)
+      |   [01;36m[K^~~[m[K
+[01m[K/usr/include/c++/10.2.0/bits/std_abs.h:79:19:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ to ‘[01m[Klong double[m[K’
+   79 |   abs([01;36m[Klong double __x[m[K)
+      |       [01;36m[K~~~~~~~~~~~~^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:9:11:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Kmpf_class std::abs(mpf_class)[m[K’
+    9 | mpf_class [01;36m[Kabs[m[K(mpf_class f) { return ::abs(f); }
+      |           [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:9:25:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ to ‘[01m[Kmpf_class[m[K’
+    9 | mpf_class abs([01;36m[Kmpf_class f[m[K) { return ::abs(f); }
+      |               [01;36m[K~~~~~~~~~~^[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:17[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:12[m[K:
+[01m[K/home/larsch/prj/mandelbrot/doubledouble.hpp:153:19:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<class FLT> doubledouble<FLT> std::abs(const doubledouble<FLT>&)[m[K’
+  153 | doubledouble<FLT> [01;36m[Kabs[m[K(const doubledouble<FLT>& f) {
+      |                   [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/doubledouble.hpp:153:19:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;36m[Knote: [m[K  ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ is not derived from ‘[01m[Kconst doubledouble<FLT>[m[K’
+   36 |   FLT absy = [01;36m[Kstd::abs(y)[m[K;
+      |              [01;36m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:12[m[K:
+[01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:288:16:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[Ktemplate<long unsigned int PREC> gmpfloat<PREC> std::abs(const gmpfloat<PREC>&)[m[K’
+  288 | gmpfloat<PREC> [01;36m[Kabs[m[K(const gmpfloat<PREC>& f) {
+      |                [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/gmpfloat.hpp:288:16:[m[K [01;36m[Knote: [m[K  template argument deduction/substitution failed:
+In file included from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m[K [01;36m[Knote: [m[K  ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ is not derived from ‘[01m[Kconst gmpfloat<PREC>[m[K’
+   36 |   FLT absy = [01;36m[Kstd::abs(y)[m[K;
+      |              [01;36m[K~~~~~~~~^~~[m[K
+In file included from [01m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:14[m[K,
+                 from [01m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[m[K:
+[01m[K/home/larsch/prj/mandelbrot/floatext.hpp:16:12:[m[K [01;36m[Knote: [m[Kcandidate: ‘[01m[K__float128 std::abs(__float128)[m[K’
+   16 | __float128 [01;36m[Kabs[m[K(__float128 flt) {
+      |            [01;36m[K^~~[m[K
+[01m[K/home/larsch/prj/mandelbrot/floatext.hpp:16:27:[m[K [01;36m[Knote: [m[K  no known conversion for argument 1 from ‘[01m[Kmpfrfloat<256, MPFR_RNDZ>[m[K’ to ‘[01m[K__float128[m[K’
+   16 | __float128 abs([01;36m[K__float128 flt[m[K) {
+      |                [01;36m[K~~~~~~~~~~~^~~[m[K
+make[2]: *** [CMakeFiles/benchmark.dir/build.make:82: CMakeFiles/benchmark.dir/benchmark.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:126: CMakeFiles/benchmark.dir/all] Error 2
+make: *** [Makefile:103: all] Error 2
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m2 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[136C:([138D[?1h[?2004hscript -qefc "make" /dev/null | less[?1l[?2004l[K
+]0;larsch@t495arch: script -qefc "make" /dev/null | less[?1049h[?1h[ 33%] Built target unittest
+[ 50%] [01;44;33mESC[0m[32mBuilding CXX object CMakeFiles/benchmark.dir/benchmark.cpp.o[01;44;33mESC[0m[0m
+In file included from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/home/larsch/prj/mandelbrot/benchmark.cpp:17[01;44;33mESC[0m[m[01;44;33mESC[0m[K:
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:[01;44;33mESC[0m[m[01;44;33mESC[0m[K In function ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Kbool isinside(FLT, FLT)[01;44;33mESC[0m[m[01;44;33mESC[0m[K’:
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:35:22:[01;44;33mESC[0m[m[01;44;33mESC[0m[K [01;44;33mESC[0m[01;31m[01;44;33mESC[0m[Kerror: [01;44;33mESC[0m[m[01;44;33mESC[0m[Kqualified-id in declaration before ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[K([01;44;33mESC[0m[m[01;44;33mESC[0m[K’ token
+   35 |   extern FLT std::abs[01;44;33mESC[0m[01;31m[01;44;33mESC[0m[K([01;44;33mESC[0m[m[01;44;33mESC[0m[Kconst FLT&);
+      |                      [01;44;33mESC[0m[01;31m[01;44;33mESC[0m[K^[01;44;33mESC[0m[m[01;44;33mESC[0m[K
+/home/larsch/prj/mandelbrot/mandelbrot.hpp: In instantiation of ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Kbool isinside(FLT, FLT) [with FLT = mpfrfloat<128, MPFR_RNDN>][01;44;33mESC[0m[m[01;44;33mESC[0m[K’:
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:72:15:[01;44;33mESC[0m[m[01;44;33mESC[0m[K   required from ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Kiter_result<FLT> iter(FLT, FLT) [with FLT = mpfrfloat<128, MPFR_RNDN>][01;44;33mESC[0m[m[01;44;33mESC[0m[K’
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/home/larsch/prj/mandelbrot/benchmark.cpp:49:27:[01;44;33mESC[0m[m[01;44;33mESC[0m[K   required from ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Kvoid benchmark(const char*) [with FLT = mpfrfloat<128, MPFR_RNDN>][01;44;33mESC[0m[m[01;44;33mESC[0m[K’
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/home/larsch/prj/mandelbrot/benchmark.cpp:103:67:[01;44;33mESC[0m[m[01;44;33mESC[0m[K   required from here
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[01;44;33mESC[0m[m[01;44;33mESC[0m[K [01;44;33mESC[0m[01;31m[01;44;33mESC[0m[Kerror: [01;44;33mESC[0m[m[01;44;33mESC[0m[Kno matching function for call to ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Kabs(mpfrfloat<128, MPFR_RNDN>&)[01;44;33mESC[0m[m[01;44;33mESC[0m[K ’
+   36 |   FLT absy = [01;44;33mESC[0m[01;31m[01;44;33mESC[0m[Kstd::abs(y)[01;44;33mESC[0m[m[01;44;33mESC[0m[K;
+      |              [01;44;33mESC[0m[01;31m[01;44;33mESC[0m[K~~~~~~~~^~~[01;44;33mESC[0m[m[01;44;33mESC[0m[K
+In file included from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/cstdlib:75[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/string:55[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/ios:42[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/ostream:38[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/iostream:39[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[01;44;33mESC[0m[m[01;44;33mESC[0m[K:
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/stdlib.h:840:12:[01;44;33mESC[0m[m[01;44;33mESC[0m[K [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[Knote: [01;44;33mESC[0m[m[01;44;33mESC[0m[Kcandidate: ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Kint abs(int)[01;44;33mESC[0m[m[01;44;33mESC[0m[K’
+  840 | extern int [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[Kabs[01;44;33mESC[0m[m[01;44;33mESC[0m[K (int __x) __THROW __attribute__ ((__const__)) __wur;
+      |            [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[K^~~[01;44;33mESC[0m[m[01;44;33mESC[0m[K
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/stdlib.h:840:21:[01;44;33mESC[0m[m[01;44;33mESC[0m[K [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[Knote: [01;44;33mESC[0m[m[01;44;33mESC[0m[K  no known conversion for argument 1 from ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Kmpfrfloat<128, MPFR_RNDN>[01;44;33mESC[0m[m[01;44;33mESC[0m[K’ to ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[K int[01;44;33mESC[0m[m[01;44;33mESC[0m[K’
+  840 | extern int abs ([01;44;33mESC[0m[01;36m[01;44;33mESC[0m[Kint __x[01;44;33mESC[0m[m[01;44;33mESC[0m[K) __THROW __attribute__ ((__const__)) __wur;
+      |                 [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[K~~~~^~~[01;44;33mESC[0m[m[01;44;33mESC[0m[K
+In file included from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/cstdlib:77[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/ext/string_conversions.h:41[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/bits/basic_string.h:6535[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/string:55[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/bits/locale_classes.h:40[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/bits/ios_base.h:41[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/ios:42[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/ostream:38[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/iostream:39[01;44;33mESC[0m[m[01;44;33mESC[0m[K,
+                 from [01;44;33mESC[0m[01m[01;44;33mESC[0m[K/home/larsch/prj/mandelbrot/benchmark.cpp:3[01;44;33mESC[0m[m[01;44;33mESC[0m[K:
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:3:[01;44;33mESC[0m[m[01;44;33mESC[0m[K [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[Knote: [01;44;33mESC[0m[m[01;44;33mESC[0m[Kcandidate: ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Klong int std::abs(long int)[01;44;33mESC[0m[m[01;44;33mESC[0m[K’
+   56 |   [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[Kabs[01;44;33mESC[0m[m[01;44;33mESC[0m[K(long __i) { return __builtin_labs(__i); }
+      |   [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[K^~~[01;44;33mESC[0m[m[01;44;33mESC[0m[K
+[01;44;33mESC[0m[01m[01;44;33mESC[0m[K/usr/include/c++/10.2.0/bits/std_abs.h:56:12:[01;44;33mESC[0m[m[01;44;33mESC[0m[K [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[Knote: [01;44;33mESC[0m[m[01;44;33mESC[0m[K  no known conversion for argument 1 from ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Kmpfrfloat<128, MPFR_RNDN>[01;44;33mESC[0m[m[01;44;33mESC[0m[K’  to ‘[01;44;33mESC[0m[01m[01;44;33mESC[0m[Klong int[01;44;33mESC[0m[m[01;44;33mESC[0m[K’
+:[Kq^P   
+[K   56 |   abs([01;44;33mESC[0m[01;36m[01;44;33mESC[0m[Klong __i[01;44;33mESC[0m[m[01;44;33mESC[0m[K) { return __builtin_labs(__i); }
+:[K
+[K      |       [01;44;33mESC[0m[01;36m[01;44;33mESC[0m[K~~~~~^~~[01;44;33mESC[0m[m[01;44;33mESC[0m[K
+:[Kq
+[K[?1l[?1049l[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m[39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[?1h[?2004h[?1l[?2004l
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m[39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[?1h[?2004hscript -qefc "make" /dev/null | less -R[?1l[?2004l
+]0;larsch@t495arch: script -qefc "make" /dev/null | less -R[?1049h[?1h[ 33%] Built target unittest[m
+[ 50%] [32mBuilding CXX object CMakeFiles/benchmark.dir/benchmark.cpp.o[0m[m
+In file included from [01m/home/larsch/prj/mandelbrot/benchmark.cpp:17[m:[m
+[01m/home/larsch/prj/mandelbrot/mandelbrot.hpp:[m In function ‘[01mbool isinside(FLT, FLT)[m’:[m
+[01m/home/larsch/prj/mandelbrot/mandelbrot.hpp:35:22:[m [01;31merror: [mqualified-id in declaration before ‘[01m([m’ token[m
+   35 |   extern FLT std::abs[01;31m([mconst FLT&);[m
+      |                      [01;31m^[m[m
+/home/larsch/prj/mandelbrot/mandelbrot.hpp: In instantiation of ‘[01mbool isinside(FLT, FLT) [with FLT = mpfrfloat<128, MPFR_RNDN>][m’:[m
+[01m/home/larsch/prj/mandelbrot/mandelbrot.hpp:72:15:[m   required from ‘[01miter_result<FLT> iter(FLT, FLT) [with FLT = mpfrfloat<128, MPFR_RNDN>][m’[m
+[01m/home/larsch/prj/mandelbrot/benchmark.cpp:49:27:[m   required from ‘[01mvoid benchmark(const char*) [with FLT = mpfrfloat<128, MPFR_RNDN>][m’[m
+[01m/home/larsch/prj/mandelbrot/benchmark.cpp:103:67:[m   required from here[m
+[01m/home/larsch/prj/mandelbrot/mandelbrot.hpp:36:22:[m [01;31merror: [mno matching function for call to ‘[01mabs(mpfrfloat<128, MPFR_RNDN>&)[m’[m
+   36 |   FLT absy = [01;31mstd::abs(y)[m;[m
+      |              [01;31m~~~~~~~~^~~[m[m
+In file included from [01m/usr/include/c++/10.2.0/cstdlib:75[m,[m
+                 from [01m/usr/include/c++/10.2.0/ext/string_conversions.h:41[m,[m
+                 from [01m/usr/include/c++/10.2.0/bits/basic_string.h:6535[m,[m
+                 from [01m/usr/include/c++/10.2.0/string:55[m,[m
+                 from [01m/usr/include/c++/10.2.0/bits/locale_classes.h:40[m,[m
+                 from [01m/usr/include/c++/10.2.0/bits/ios_base.h:41[m,[m
+                 from [01m/usr/include/c++/10.2.0/ios:42[m,[m
+                 from [01m/usr/include/c++/10.2.0/ostream:38[m,[m
+                 from [01m/usr/include/c++/10.2.0/iostream:39[m,[m
+                 from [01m/home/larsch/prj/mandelbrot/benchmark.cpp:3[m:[m
+[01m/usr/include/stdlib.h:840:12:[m [01;36mnote: [mcandidate: ‘[01mint abs(int)[m’[m
+  840 | extern int [01;36mabs[m (int __x) __THROW __attribute__ ((__const__)) __wur;[m
+      |            [01;36m^~~[m[m
+[01m/usr/include/stdlib.h:840:21:[m [01;36mnote: [m  no known conversion for argument 1 from ‘[01mmpfrfloat<128, MPFR_RNDN>[m’ to ‘[01mint[m’[m
+  840 | extern int abs ([01;36mint __x[m) __THROW __attribute__ ((__const__)) __wur;[m
+      |                 [01;36m~~~~^~~[m[m
+In file included from [01m/usr/include/c++/10.2.0/cstdlib:77[m,[m
+                 from [01m/usr/include/c++/10.2.0/ext/string_conversions.h:41[m,[m
+                 from [01m/usr/include/c++/10.2.0/bits/basic_string.h:6535[m,[m
+                 from [01m/usr/include/c++/10.2.0/string:55[m,[m
+                 from [01m/usr/include/c++/10.2.0/bits/locale_classes.h:40[m,[m
+                 from [01m/usr/include/c++/10.2.0/bits/ios_base.h:41[m,[m
+                 from [01m/usr/include/c++/10.2.0/ios:42[m,[m
+                 from [01m/usr/include/c++/10.2.0/ostream:38[m,[m
+                 from [01m/usr/include/c++/10.2.0/iostream:39[m,[m
+                 from [01m/home/larsch/prj/mandelbrot/benchmark.cpp:3[m:[m
+[01m/usr/include/c++/10.2.0/bits/std_abs.h:56:3:[m [01;36mnote: [mcandidate: ‘[01mlong int std::abs(long int)[m’[m
+   56 |   [01;36mabs[m(long __i) { return __builtin_labs(__i); }[m
+      |   [01;36m^~~[m[m
+[01m/usr/include/c++/10.2.0/bits/std_abs.h:56:12:[m [01;36mnote: [m  no known conversion for argument 1 from ‘[01mmpfrfloat<128, MPFR_RNDN>[m’ to ‘[01mlong int[m’[m
+   56 |   abs([01;36mlong __i[m) { return __builtin_labs(__i); }[m
+      |       [01;36m~~~~~^~~[m[m
+[01m/usr/include/c++/10.2.0/bits/std_abs.h:61:3:[m [01;36mnote: [mcandidate: ‘[01mlong long int std::abs(long long int)[m’[m
+:[K^M^M^M ^M^M^Mq^M^C^M^Q^C^C^M^C^C^M:q^M^[^[:q!^M^C^C[K[?1l[?1049l[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m15 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[135C:([137D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m15 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[135C:([137D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m15 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[135C:([137D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m15 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[135C:([137D[?1h[?2004h [?1l[?2004l[K[1C
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m15 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[135C:([137D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m15 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[135C:([137D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m15 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[135C:([137D[?1h[?2004hq[?1l[?2004lq[K
+]0;larsch@t495arch: qzsh: command not found: q
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004h::q[?1l[?2004l[K
+]0;larsch@t495arch: :qzsh: command not found: :q
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004hqq![?1l[?2004l[K
+]0;larsch@t495arch: q!zsh: command not found: q!
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004h[?1l[?2004l[K
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004hddkjfkj[?1l[?2004l[K
+]0;larsch@t495arch: dkjfkjzsh: command not found: dkjfkj
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004hkkj[?1l[?2004l[K
+]0;larsch@t495arch: kjzsh: command not found: kj
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004hj[?1l[?2004lj[K
+]0;larsch@t495arch: jzsh: command not found: j
+[1m[7m%[27m[1m[0m                                                                                                                                                                                               ]0;larsch@t495arch: ~/prj/mandelbrot[0m[27m[24m[J[1m[31m127 [39m[0m[1m[34mlarsch[39m[0m@t495arch [1m~/prj/mandelbrot [0m[35m([39mgit[35m)[33m-[35m[[32mmaster[35m][39m % [K[134C:([136D[?1h[?2004h[?2004l[K
+
+Script done on 2020-09-27 10:51:38+02:00 [COMMAND_EXIT_CODE="127"]

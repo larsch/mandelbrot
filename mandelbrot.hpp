@@ -11,6 +11,8 @@
 
 #include <cmath>
 
+#include "floatext.hpp"
+
 const int LIMIT = 2048;
 
 template <typename FLT>
@@ -18,15 +20,22 @@ double get_double(const FLT& f) {
   return double(f);
 }
 
+template <typename FLT>
+double get_double(const doubledouble<FLT>& f) {
+  return double(FLT(f));
+}
+
 /**
  * Check if x,y is inside some of the obvious areas of the mandelbrot set. This
  * improves performance greatly when rendering initial screen where the main set
  * is visible.
  */
+namespace std{}
 template <typename FLT>
 bool isinside(FLT x, FLT y) {
-  FLT absy = FLT(std::abs(get_double(y)));
-  if (x > -0.75 && absy < 0.75) {
+  // extern FLT absolute(const FLT&);
+  FLT absy = std::abs(y);
+  if (x > FLT(-0.75) && absy < FLT(0.75)) {
     // check if x,y is inside the main cardioid
     x -= FLT(0.25);
     FLT c1 = (x * x + y * y);

@@ -1,6 +1,7 @@
 #ifndef _semaphore_hpp
 #define _semaphore_hpp
 
+#include <atomic>
 #include <condition_variable>
 #include <iostream>
 #include <mutex>

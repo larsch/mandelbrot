@@ -6,10 +6,15 @@
  * Copyright 2020 by Lars Christensen <larsch@belunktum.dk>
  */
 
-#include "mandelbrot.hpp"
-
+#if HAVE_LIBGMP
+#include "gmpfloat.hpp"
+#endif
+#if HAVE_LIBMPFR
+#include "mpfrfloat.hpp"
+#endif
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <quadmath.h>
 
 #include <atomic>
 #include <cassert>
@@ -21,15 +26,12 @@
 #include <thread>
 #include <vector>
 
-#if HAVE_LIBGMP
-#include "gmpfloat.hpp"
-#endif
-#if HAVE_LIBMPFR
-#include "mpfrfloat.hpp"
-#endif
 #include "doubledouble.hpp"
 #include "float.hpp"
+#include "mandelbrot.hpp"
 #include "semaphore.hpp"
+#include "strop.hpp"
+#include "typenames.hpp"
 
 static TTF_Font *font;
 
@@ -55,6 +57,10 @@ SDL_PixelFormatEnum pixel_format = SDL_PIXELFORMAT_ARGB8888;
 static flt center_x{-0.60};
 static flt center_y{0};
 static flt screen_size{2.0};
+
+// static flt center_x{-1.93947719527526271517e0};
+// static flt center_y{-1.86470576599940926984e-3};
+// static flt screen_size{2.0e-20};
 
 enum FloatType {
   FT_AUTO,
@@ -120,10 +126,12 @@ static bool rendering = false;
 static std::atomic_bool running = true;
 static int jobs_remaining = 0;
 static std::chrono::time_point<std::chrono::high_resolution_clock> start;
-static FloatType algorithm = FT_AUTO;
-static FloatType run_algorithm = FT_AUTO;
+static FloatType user_chosen_float_type = FT_AUTO; /** Type chosen by user */
+static FloatType render_float_type = FT_AUTO;      /**< Type used for render */
 
 #define RGB(r, g, b) (((r) << 16) | ((g) << 8) | ((b)))
+
+#define ROWRENDER_COMPLETE_EVENT SDL_USEREVENT
 
 /**
  * Convert HSV to RGB color.
@@ -252,9 +260,9 @@ uint32_t blend(uint32_t c1, uint32_t c2, float f) {
 #include <typeinfo>
 template <typename FLT>
 void render_rowx(int row) {
-  const FLT scl{pixel_size};
-  const FLT minx{min_x};
-  const FLT miny{min_y};
+  const FLT scl = FLT(pixel_size);
+  const FLT minx = FLT(min_x);
+  const FLT miny = FLT(min_y);
   row = maprow(row);
   if (row < rows) {
     FLT yc = miny + FLT(row) * scl;
@@ -278,54 +286,52 @@ void render_rowx(int row) {
   }
 
   SDL_Event event;
-  event.type = SDL_USEREVENT;
+  event.type = ROWRENDER_COMPLETE_EVENT;
   SDL_PushEvent(&event);
 }
 
-#if HAVE_FLOAT128
-std::ostream &operator<<(std::ostream &os, __float128 f) {
-  return os << double(f);
-}
-#endif
-
-template <typename T>
-bool try_render(int row) {
-  if (pixel_size > std::numeric_limits<T>::epsilon()) {
-    render_rowx<T>(row);
-    return true;
-  } else {
-    return false;
-  }
-}
-
+/**
+ * Shorthand for epsilon
+ */
 template <typename FLT>
-double epsilon() {
-  return double(std::numeric_limits<FLT>::epsilon());
+flt epsilon() {
+  // return std::numeric_limits<FLT>::epsilon();
+  return flt(std::numeric_limits<FLT>::epsilon());
 };
 
-// template<>
-// flt epsilon<
-
+/**
+ * Determine the floating point type that will provide enough precision at the
+ * curent pixel size.
+ */
 FloatType determine_type() {
-  if (pixel_size > epsilon<float>()) return FT_FLOAT;
-  if (pixel_size > epsilon<double>()) return FT_DOUBLE;
-  if (pixel_size > epsilon<__float80>()) return FT_FLOAT80;
-  if (pixel_size > epsilon<doubledouble<double>>()) return FT_DOUBLEDOUBLE;
-  if (pixel_size > epsilon<__float128>()) return FT_FLOAT128;
-  if (pixel_size > epsilon<long double>()) return FT_LONG_DOUBLE;
-  if (pixel_size > epsilon<doubledouble<__float80>>()) return FT_DOUBLEFLOAT80;
-  if (pixel_size > epsilon<doubledouble<long double>>()) return FT_LONG_DOUBLE;
-  if (pixel_size > epsilon<doubledouble<__float128>>())
+  if (pixel_size > epsilon<float>())
+    return FT_FLOAT;
+  else if (pixel_size > epsilon<double>())
+    return FT_DOUBLE;
+  else if (pixel_size > epsilon<__float80>())
+    return FT_FLOAT80;
+  else if (pixel_size > epsilon<doubledouble<double>>())
+    return FT_DOUBLEDOUBLE;
+  else if (pixel_size > epsilon<__float128>())
+    return FT_FLOAT128;
+  else if (pixel_size > epsilon<long double>())
+    return FT_LONG_DOUBLE;
+  else if (pixel_size > epsilon<doubledouble<__float80>>())
+    return FT_DOUBLEFLOAT80;
+  else if (pixel_size > epsilon<doubledouble<long double>>())
+    return FT_LONG_DOUBLE;
+  else if (pixel_size > epsilon<doubledouble<__float128>>())
     return FT_DOUBLEFLOAT128;
-  return FT_GMPFLOAT;
+  else
+    return FT_GMPFLOAT;
 }
 
 /**
- * Render specified row using selected algorithm.
+ * Render specified row using selected floating point type.
  */
 #include <cfloat>
 void render_row(int row) {
-  switch (run_algorithm) {
+  switch (render_float_type) {
     case FT_FLOAT:
       render_rowx<float>(row);
       break;
@@ -379,9 +385,19 @@ void render_row(int row) {
  */
 void start_render() {
   pixel_size = screen_size / flt(rows);
-  run_algorithm = algorithm == FT_AUTO ? determine_type() : algorithm;
+  render_float_type = user_chosen_float_type == FT_AUTO
+                          ? determine_type()
+                          : user_chosen_float_type;
   min_x = center_x - w * pixel_size / flt(2.0);
   min_y = center_y - rows * pixel_size / flt(2.0);
+
+  std::cout.precision(std::numeric_limits<decltype(min_x)>::digits10);
+  std::cout << "type: " << tname<decltype(min_x)>() << std::endl;
+  std::cout << "digits: " << std::numeric_limits<decltype(min_x)>::digits10
+            << std::endl;
+  std::cout << "min_x: " << min_x << std::endl;
+  std::cout << "min_y: " << min_y << std::endl;
+
   row_bits = log2(rows) + 1;
   virtual_rows = 1 << row_bits;
   jobs_left.release(virtual_rows);
@@ -425,8 +441,12 @@ class mandelbrot_application {
   ~mandelbrot_application();
   mandelbrot_application(const mandelbrot_application &) = delete;
   mandelbrot_application &operator=(const mandelbrot_application &) = delete;
+
+  /** Main program loop */
   void run();
+  /** Recreate rendering texture. Called after resize */
   void recreate_render_texture();
+  /** Zoom in/out centered at specified screen coordinate */
   void zoom(int x, int y, float scale);
 
  private:
@@ -465,10 +485,7 @@ mandelbrot_application::mandelbrot_application() {
 }
 
 void mandelbrot_application::run() {
-  // SDL_Surface *surface = SDL_GetWindowSurface(window);
-  // SDL_Surface *surface = NULL;
-  // SDL_ShowWindow(window);
-  int keep_running = SDL_TRUE;
+  bool keep_running = true;
 
   const int thread_count = 8;
   std::vector<std::thread> threads;
@@ -504,8 +521,9 @@ void mandelbrot_application::run() {
         SDL_RenderCopy(renderer, texture, NULL, NULL);
 
         {
-          auto text_surface = TTF_RenderUTF8_Blended(
-              font, floattypenames[run_algorithm], SDL_Color{255, 255, 255, 0});
+          auto text_surface =
+              TTF_RenderUTF8_Blended(font, floattypenames[render_float_type],
+                                     SDL_Color{255, 255, 255, 0});
           auto text_texture =
               SDL_CreateTextureFromSurface(renderer, text_surface);
           SDL_Rect dest_rect{0, 0, text_surface->w, text_surface->h};
@@ -540,7 +558,7 @@ void mandelbrot_application::run() {
     }
 
     switch (e.type) {
-      case SDL_USEREVENT:
+      case ROWRENDER_COMPLETE_EVENT:
         if (--jobs_remaining == 0) {
           auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
                               std::chrono::high_resolution_clock::now() - start)
@@ -550,20 +568,21 @@ void mandelbrot_application::run() {
         update_surface = true;
         break;
       case SDL_QUIT:
-        keep_running = SDL_FALSE;
+        keep_running = false;
         break;
       case SDL_KEYDOWN:
         if (e.key.keysym.sym == SDLK_RIGHT) {
-          center_x += screen_size * 0.1;
+          center_x += screen_size * flt(0.1);
+          std::cout << center_x << std::endl;
           restart_render = true;
         } else if (e.key.keysym.sym == SDLK_LEFT) {
-          center_x -= screen_size * 0.1;
+          center_x -= screen_size * flt(0.1);
           restart_render = true;
         } else if (e.key.keysym.sym == SDLK_DOWN) {
-          center_y += screen_size * 0.1;
+          center_y += screen_size * flt(0.1);
           restart_render = true;
         } else if (e.key.keysym.sym == SDLK_UP) {
-          center_y -= screen_size * 0.1;
+          center_y -= screen_size * flt(0.1);
           restart_render = true;
         } else if (e.key.keysym.sym == SDLK_RIGHTBRACKET) {
           if (rendering) cancel_render();
@@ -582,11 +601,11 @@ void mandelbrot_application::run() {
         } else if (e.key.keysym.mod == KMOD_LSHIFT ||
                    e.key.keysym.mod == KMOD_RSHIFT) {
           if (e.key.keysym.sym == SDLK_0) {
-            algorithm = FT_AUTO;
+            user_chosen_float_type = FT_AUTO;
             restart_render = true;
           } else if (e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_9) {
             int num = e.key.keysym.sym - SDLK_1 + 1;
-            if (num < FT_MAX) algorithm = FloatType(num);
+            if (num < FT_MAX) user_chosen_float_type = FloatType(num);
             restart_render = true;
           }
         } else if (e.key.keysym.mod == KMOD_LCTRL ||
@@ -678,6 +697,26 @@ int main(int argc, char **argv) {
   try {
     mandelbrot_application app;
     app.run();
+
+    for (int i = 0; i < 10; ++i) {
+      // mp_exp_t exp;
+      // mpf_init2(saves[i].x.mpf, 256);
+      // mpf_set_d(saves[i].x.mpf, 3.14159265);
+      // char *str = mpf_get_str(0, &exp, 10, 0, saves[i].x.mpf);
+      // std::cout << i << "," << str << "," << exp << std::endl;
+      // int exp;
+      // std::frexp(saves[i].x, &exp);
+      // printf("%d %.36f\n", i, (double)saves[i].x);
+      // std::cout << float2string(saves[i].x) << " " <<
+      // float2string(saves[i].y) << " " << float2string(saves[i].s) <<
+      // std::endl;
+
+      // char str[256];
+      // __float128 f = 3.141592653;
+      // auto r = quadmath_snprintf(str, 256, "%.20Qe", f);
+      // std::cout << "result=" << r << std::endl;
+      // std::cout << str << std::endl;
+    }
     return EXIT_SUCCESS;
   } catch (const std::exception &exc) {
     std::cerr << exc.what() << std::endl;
