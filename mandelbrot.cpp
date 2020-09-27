@@ -631,6 +631,7 @@ void mandelbrot_application::run() {
         int x, y;
         SDL_GetMouseState(&x, &y);
         zoom(x, y, pow(zoom_factor, int(e.wheel.y)));
+        zoom(x, y, pow(zoom_factor, int(e.wheel.y)));
       } break;
       case SDL_WINDOWEVENT:
         if (e.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -666,17 +667,25 @@ void mandelbrot_application::zoom(int x, int y, float scale) {
   flt x1 = width * flt(0.5) - (center_x - left) / new_pixel_size;
   flt y1 = height * flt(0.5) - (center_y - top) / new_pixel_size;
 
-  SDL_Texture *back = SDL_CreateTexture(
+  // Render scaled version of on-screen texture to a temporary texture and copy
+  // pixels.
+  SDL_Texture *temp_texture = SDL_CreateTexture(
       renderer, pixel_format, SDL_TEXTUREACCESS_TARGET, width, height);
-  SDL_SetRenderTarget(renderer, back);
+  SDL_SetRenderTarget(renderer, temp_texture);
   SDL_FRect dst{static_cast<float>(x1), static_cast<float>(y1),
                 static_cast<float>(width / scale),
                 static_cast<float>(height / scale)};
-  SDL_RenderCopy(renderer, texture, 0, 0);
   SDL_RenderCopyF(renderer, texture, 0, &dst);
   SDL_RenderReadPixels(renderer, 0, pixel_format, pixels, pitch);
   SDL_SetRenderTarget(renderer, NULL);
-  SDL_DestroyTexture(back);
+  SDL_DestroyTexture(temp_texture);
+
+  // Update the on-screen texture
+  int texture_pitch;
+  void *pix = NULL;
+  SDL_LockTexture(texture, NULL, &pix, &texture_pitch);
+  memcpy(pix, pixels, width * height * 4);
+  SDL_UnlockTexture(texture);
 }
 
 mandelbrot_application::~mandelbrot_application() {
