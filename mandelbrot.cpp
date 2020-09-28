@@ -66,6 +66,7 @@ enum FloatType {
   FT_AUTO,
   FT_FLOAT,
   FT_DOUBLE,
+  FT_DOUBLEFLOAT,
   FT_DOUBLEDOUBLE,
 #if HAVE_FLOAT80
   FT_FLOAT80,
@@ -77,10 +78,11 @@ enum FloatType {
 #endif
 #if HAVE_LONG_DOUBLE
   FT_LONG_DOUBLE,
-// FT_DOUBLELONG_DOUBLE,
+  FT_DOUBLELONG_DOUBLE,
 #endif
 #if HAVE_LIBGMP
-  FT_GMPFLOAT,
+  FT_GMPFLOAT128,
+  FT_GMPFLOAT256,
 #endif
 #if HAVE_LIBMPFR
   FT_MPFRFLOAT128,
@@ -90,23 +92,30 @@ enum FloatType {
 };
 
 const char *floattypenames[] = {
-    "auto",           "float",
-    "double",         "doubledouble<double>",
+    "auto",                  // FT_AUTO
+    "float",                 // FT_FLOAT
+    "double",                // FT_DOUBLE
+    "doubledouble<float>",   // FT_DOUBLEFLOAT
+    "doubledouble<double>",  // FT_DOUBLEDOUBLE
 #if HAVE_FLOAT80
-    "__float80",      "doubledouble<__float80>",
+    "__float80",                // FT_FLOAT80
+    "doubledouble<__float80>",  // FT_DOUBLEFLOAT80
 #endif
 #if HAVE_FLOAT128
-    "__float128",     "doubledouble<__float128>",
+    "__float128",                // FT_FLOAT80
+    "doubledouble<__float128>",  // FT_DOULEFLOAT80
 #endif
 #if HAVE_LONG_DOUBLE
-    "long double",
-// FT_DOUBLELONG_DOUBLE,
+    "long double",                // FT_LONGDOUBLE
+    "doubledouble<long double>",  // FT_DOUBLELONG_DOUBLE,
 #endif
 #if HAVE_LIBGMP
-    "gmpfloat",
+    "gmpfloat<128>",  // FT_GMPFLOAT128
+    "gmpfloat<256>",  // FT_GMPFLOAT256
 #endif
 #if HAVE_LIBMPFR
-    "mpfrfloat<128>", "mpfrfloat<256>",
+    "mpfrfloat<128>",
+    "mpfrfloat<256>",
 #endif
 };
 
@@ -303,29 +312,33 @@ flt epsilon() {
 
 /**
  * Determine the floating point type that will provide enough precision at the
- * curent pixel size.
+ * curent pixel size. Options are sorted by speed.
  */
 FloatType determine_type() {
   if (pixel_size > epsilon<float>())
     return FT_FLOAT;
   else if (pixel_size > epsilon<double>())
     return FT_DOUBLE;
-  else if (pixel_size > epsilon<__float80>())
-    return FT_FLOAT80;
-  else if (pixel_size > epsilon<doubledouble<double>>())
-    return FT_DOUBLEDOUBLE;
-  else if (pixel_size > epsilon<__float128>())
-    return FT_FLOAT128;
   else if (pixel_size > epsilon<long double>())
     return FT_LONG_DOUBLE;
+  else if (pixel_size > epsilon<__float80>())
+    return FT_FLOAT80;
+  else if (pixel_size > epsilon<doubledouble<float>>())
+    return FT_DOUBLEFLOAT;
+  else if (pixel_size > epsilon<doubledouble<double>>())
+    return FT_DOUBLEDOUBLE;
   else if (pixel_size > epsilon<doubledouble<__float80>>())
     return FT_DOUBLEFLOAT80;
+  else if (pixel_size > epsilon<__float128>())
+    return FT_FLOAT128;
   else if (pixel_size > epsilon<doubledouble<long double>>())
     return FT_LONG_DOUBLE;
   else if (pixel_size > epsilon<doubledouble<__float128>>())
     return FT_DOUBLEFLOAT128;
+  else if (pixel_size > epsilon<gmpfloat<128>>())
+    return FT_GMPFLOAT128;
   else
-    return FT_GMPFLOAT;
+    return FT_GMPFLOAT256;
 }
 
 /**
@@ -365,8 +378,11 @@ void render_row(int row) {
       break;
 #endif
 #if HAVE_LIBGMP
-    case FT_GMPFLOAT:
+    case FT_GMPFLOAT128:
       render_rowx<gmpfloat<128>>(row);
+      break;
+    case FT_GMPFLOAT256:
+      render_rowx<gmpfloat<256>>(row);
       break;
 #endif
 #if HAVE_LIBMPFR
