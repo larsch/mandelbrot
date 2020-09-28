@@ -697,6 +697,8 @@ void mandelbrot_application::zoom(int x, int y, float scale) {
   SDL_FRect dst{static_cast<float>(x1), static_cast<float>(y1),
                 static_cast<float>(width / scale),
                 static_cast<float>(height / scale)};
+  if (scale > 1.0)
+    SDL_RenderCopy(renderer, texture, 0, 0);
   SDL_RenderCopyF(renderer, texture, 0, &dst);
   SDL_RenderReadPixels(renderer, 0, pixel_format, pixels, pitch);
   SDL_SetRenderTarget(renderer, NULL);
