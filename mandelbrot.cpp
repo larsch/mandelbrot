@@ -450,6 +450,10 @@ class mandelbrot_application {
   void recreate_render_texture();
   /** Zoom in/out centered at specified screen coordinate */
   void zoom(int x, int y, float scale);
+  /** Render text on screen */
+  void render_text(int x, int y, const char *str);
+  /** Render help text */
+  void render_help();
 
  private:
   SDL_Window *window = nullptr;
@@ -490,13 +494,50 @@ mandelbrot_application::mandelbrot_application() {
   recreate_render_texture();
 }
 
+void mandelbrot_application::render_text(int x, int y, const char *str) {
+  auto text_surface =
+      TTF_RenderUTF8_Blended(font, str, SDL_Color{255, 255, 255, 0});
+  auto text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+  SDL_Rect dest_rect{x, y, text_surface->w, text_surface->h};
+  SDL_RenderCopy(renderer, text_texture, 0, &dest_rect);
+  SDL_DestroyTexture(text_texture);
+  SDL_FreeSurface(text_surface);
+}
+
+#define RENDER_TEXT(x, y, strseq)          \
+  {                                        \
+    std::ostringstream ostr;               \
+    ostr << strseq;                        \
+    render_text(x, y, ostr.str().c_str()); \
+  }
+
+static const char *help[] = {
+    "h, ?, F1: toggle help display",
+    "i: toggle information display",
+    "shift+<N>: use fixed precision",
+    "shift+0: use dynamic precision (default)",
+};
+
+void mandelbrot_application::render_help() {
+  int lines = sizeof(help) / sizeof(help[0]);
+  int width, height;
+  SDL_GetWindowSize(window, &width, &height);
+  for (int i = 0; i < lines; ++i) {
+    int y = height - 20 - 20 * (lines - i);
+    render_text(10, y, help[i]);
+  }
+}
+
 void mandelbrot_application::run() {
   bool keep_running = true;
+  bool show_help = false;
+  bool show_information = false;
 
   std::array<int, 32> rows_completed;
   unsigned int rows_completed_count = 0;
 
-  const int thread_count = std::thread::hardware_concurrency();;
+  const int thread_count = std::thread::hardware_concurrency();
+  ;
   std::cout << "starting " << thread_count << " workers" << std::endl;
   std::vector<std::thread> threads;
   for (int i = 0; i < thread_count; ++i) {
@@ -540,30 +581,13 @@ void mandelbrot_application::run() {
         SDL_UnlockTexture(texture);
         SDL_RenderCopy(renderer, texture, NULL, NULL);
 
-        {
-          auto text_surface =
-              TTF_RenderUTF8_Blended(font, floattypenames[render_float_type],
-                                     SDL_Color{255, 255, 255, 0});
-          auto text_texture =
-              SDL_CreateTextureFromSurface(renderer, text_surface);
-          SDL_Rect dest_rect{0, 0, text_surface->w, text_surface->h};
-          SDL_RenderCopy(renderer, text_texture, 0, &dest_rect);
-          SDL_DestroyTexture(text_texture);
-          SDL_FreeSurface(text_surface);
+        if (show_information) {
+          render_text(10, 10, floattypenames[render_float_type]);
+          RENDER_TEXT(10, 30, pixel_size);
+          RENDER_TEXT(10, 50, jobs_remaining);
         }
 
-        {
-          std::ostringstream ostr;
-          ostr << screen_size;
-          auto text_surface = TTF_RenderUTF8_Blended(
-              font, ostr.str().c_str(), SDL_Color{255, 255, 255, 0});
-          auto text_texture =
-              SDL_CreateTextureFromSurface(renderer, text_surface);
-          SDL_Rect dest_rect{0, 30, text_surface->w, text_surface->h};
-          SDL_RenderCopy(renderer, text_texture, 0, &dest_rect);
-          SDL_DestroyTexture(text_texture);
-          SDL_FreeSurface(text_surface);
-        }
+        if (show_help) render_help();
 
         SDL_RenderPresent(renderer);
         update_surface = false;
@@ -597,8 +621,21 @@ void mandelbrot_application::run() {
       case SDL_QUIT:
         keep_running = false;
         break;
+      case SDL_TEXTINPUT:
+        if (strcmp(e.text.text, "?") == 0) {
+          show_help = !show_help;
+          update_surface = true;
+        }
+        break;
       case SDL_KEYDOWN:
-        if (e.key.keysym.sym == SDLK_RIGHT) {
+        if (e.key.keysym.sym == SDLK_h || e.key.keysym.sym == SDLK_QUESTION ||
+            e.key.keysym.sym == SDLK_F1) {
+          show_help = !show_help;
+          update_surface = true;
+        } else if (e.key.keysym.sym == SDLK_i) {
+          show_information = !show_information;
+          update_surface = true;
+        } else if (e.key.keysym.sym == SDLK_RIGHT) {
           center_x += screen_size * flt(0.1);
           std::cout << center_x << std::endl;
           restart_render = true;
@@ -701,8 +738,7 @@ void mandelbrot_application::zoom(int x, int y, float scale) {
   SDL_FRect dst{static_cast<float>(x1), static_cast<float>(y1),
                 static_cast<float>(width / scale),
                 static_cast<float>(height / scale)};
-  if (scale > 1.0)
-    SDL_RenderCopy(renderer, texture, 0, 0);
+  if (scale > 1.0) SDL_RenderCopy(renderer, texture, 0, 0);
   SDL_RenderCopyF(renderer, texture, 0, &dst);
   SDL_RenderReadPixels(renderer, 0, pixel_format, pixels, pitch);
   SDL_SetRenderTarget(renderer, NULL);

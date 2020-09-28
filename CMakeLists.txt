@@ -33,27 +33,28 @@ MPFR_WANT_FLOAT128=1)
 add_compile_options(-std=c++17 -Wall -Wextra -Warith-conversion)
 # add_compile_options(-ffast-math)
 
+option(PROFILE "Enable profiling" FALSE)
+option(FLTO "Enable FLTO" TRUE)
+
+if(PROFILE)
+add_compile_options(-pg -ggdb)
+add_link_options(-pg -ggdb)
+endif()
+
+if(FLTO)
+add_compile_options(-flto)
+add_link_options(-flto)
+endif()
+
 add_executable(mandelbrot mandelbrot.cpp)
 
-# target_compile_definitions(mandelbrot PUBLIC -DHAVE_LONG_DOUBLE=$<BOOL:${HAVE_LONG_DOUBLE}>)
-# target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT80=$<BOOL:${HAVE_FLOAT80}>)
-# target_compile_definitions(mandelbrot PUBLIC -DHAVE_FLOAT128=$<BOOL:${HAVE_FLOAT128}>)
-# target_compile_definitions(mandelbrot PUBLIC -DHAVE_LIBGMP=$<BOOL:${LIBGMP}>)
-
-# target_compile_options(mandelbrot PUBLIC -std=c++17)
-# target_compile_options(mandelbrot PUBLIC -Wall -Wextra)
-# target_compile_options(mandelbrot PUBLIC -ffast-math)
 target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-Werror>")
 target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-O3>")
-target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
-target_link_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 
 target_link_libraries(mandelbrot PUBLIC "${SDL2_LIBS}" Threads::Threads)
 target_link_libraries(mandelbrot PUBLIC quadmath)
 
 add_executable(benchmark benchmark.cpp)
-target_compile_options(benchmark PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
-target_link_options(benchmark PUBLIC "$<$<CONFIG:RELEASE>:-flto>")
 
 add_executable(unittest unittest.cpp)
 
