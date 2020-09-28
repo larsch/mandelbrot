@@ -523,10 +523,8 @@ void mandelbrot_application::run() {
         int width, h;
         SDL_GetWindowSize(window, &width, &h);
         if (rows_completed_count == rows_completed.max_size()) {
-          std::cout << "copy all rows" << std::endl;
           memcpy(pix, pixels, width * h * 4);
         } else {
-          std::cout << "copy " << rows_completed_count << " rows" << std::endl;
           for (unsigned int i = 0; i < rows_completed_count; ++i) {
             int row = rows_completed[i];
             int pixels_pitch = width * 4;
@@ -655,7 +653,6 @@ void mandelbrot_application::run() {
         restart_render = true;
         int x, y;
         SDL_GetMouseState(&x, &y);
-        zoom(x, y, pow(zoom_factor, int(e.wheel.y)));
         zoom(x, y, pow(zoom_factor, int(e.wheel.y)));
       } break;
       case SDL_WINDOWEVENT:
