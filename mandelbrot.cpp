@@ -474,6 +474,10 @@ void mandelbrot_application::recreate_render_texture() {
 mandelbrot_application::mandelbrot_application() {
   SDL_Init(SDL_INIT_VIDEO);
 
+  TTF_Init();
+  font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSans-Bold.ttf", 16);
+  TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
+
   window = SDL_CreateWindow("Mandelbrot", SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED, 1024, 768,
                             SDL_WINDOW_RESIZABLE);
@@ -717,15 +721,14 @@ mandelbrot_application::~mandelbrot_application() {
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   delete[] pixels;
+  TTF_CloseFont(font);
+  TTF_Quit();
+  SDL_Quit();
 }
 
 int main(int argc, char **argv) {
   (void)argc;
   (void)argv;
-
-  TTF_Init();
-  font = TTF_OpenFont("/usr/share/fonts/TTF/DejaVuSans-Bold.ttf", 16);
-  TTF_SetFontHinting(font, TTF_HINTING_NORMAL);
 
   try {
     mandelbrot_application app;
