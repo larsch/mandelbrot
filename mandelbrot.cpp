@@ -492,7 +492,8 @@ void mandelbrot_application::run() {
   std::array<int, 32> rows_completed;
   unsigned int rows_completed_count = 0;
 
-  const int thread_count = 8;
+  const int thread_count = std::thread::hardware_concurrency();;
+  std::cout << "starting " << thread_count << " workers" << std::endl;
   std::vector<std::thread> threads;
   for (int i = 0; i < thread_count; ++i) {
     threads.push_back(std::thread(worker));
