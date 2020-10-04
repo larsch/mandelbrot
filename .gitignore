@@ -9,3 +9,4 @@ build/
 cmake_install.cmake
 Makefile
 unittest
+gmon.out
