@@ -78,11 +78,11 @@ std::istream& operator>>(std::istream& os, doubledouble<FLT>& rhs) {
   return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const __float128& rhs) {
+inline std::ostream& operator<<(std::ostream& os, const __float128& rhs) {
   return os << gmpfloat<113>(rhs);
 }
 
-std::istream& operator>>(std::istream& os, __float128& rhs) {
+inline std::istream& operator>>(std::istream& os, __float128& rhs) {
   gmpfloat<113> flt;
   os >> flt;
   rhs = __float128(flt);

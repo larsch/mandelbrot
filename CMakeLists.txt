@@ -46,7 +46,14 @@ add_compile_options(-flto)
 add_link_options(-flto)
 endif()
 
-add_executable(mandelbrot mandelbrot.cpp)
+add_executable(
+    mandelbrot
+    mandelbrot.cpp
+    render.cpp
+    application.cpp
+    palette.cpp
+    floattype.cpp
+    )
 
 target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-Werror>")
 target_compile_options(mandelbrot PUBLIC "$<$<CONFIG:RELEASE>:-O3>")

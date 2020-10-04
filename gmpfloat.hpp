@@ -276,11 +276,12 @@ class numeric_limits<gmpfloat<PREC>> {
 };
 
 template <>
-gmpfloat<128> numeric_limits<gmpfloat<128>>::epsilon() {
+inline gmpfloat<128> numeric_limits<gmpfloat<128>>::epsilon() {
   return gmpfloat<128>(0.58774717541114375e-38);
 }
+
 template <>
-gmpfloat<256> numeric_limits<gmpfloat<256>>::epsilon() {
+inline gmpfloat<256> numeric_limits<gmpfloat<256>>::epsilon() {
   return gmpfloat<256>(0.17272337110188889e-76);
 }
 

@@ -13,7 +13,7 @@
 
 #include "floatext.hpp"
 
-const int LIMIT = 2048;
+static const int LIMIT = 2048;
 
 template <typename FLT>
 double get_double(const FLT& f) {

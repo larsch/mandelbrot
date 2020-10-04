@@ -208,12 +208,12 @@ template <int PREC>
 double _epsilon();
 
 template <>
-double _epsilon<128>() {
+inline double _epsilon<128>() {
   return 0.58774717541114375e-38;
 }
 
 template <>
-double _epsilon<256>() {
+inline double _epsilon<256>() {
   return 0.17272337110188889e-76;
 }
 

@@ -13,7 +13,7 @@ class numeric_limits<__float128> {
   }
 };
 
-__float128 abs(__float128 flt) {
+inline __float128 abs(__float128 flt) {
   if (flt < __float128(0.0)) {
     return -flt;
   } else {
